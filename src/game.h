@@ -54,7 +54,7 @@ private:
 	// Elemento del juego
 	// TODO: añadir atributos para los objetos del juego
 	std::vector <Vehicle*> vehicles;
-	std::vector<Log*> logs;
+	std::vector <Log*> logs;
 public:
 	Game();
 	~Game();

@@ -66,8 +66,7 @@ Game::~Game()
 	// TODO: liberar memoria reservada por la clase
 }
 
-void
-Game::render() const
+void Game::render() const
 {
 	SDL_RenderClear(renderer);
 
@@ -77,11 +76,9 @@ Game::render() const
 	for (int i = 0;i < vehicles.size();i++) vehicles[i]->render();
 
 
-	for (int i = 0;i < vehicles.size();i++) logs[i]->render();
+	for (int i = 0;i < logs.size();i++) logs[i]->render();
 
-	SDL_RenderPresent(renderer);
-
-	
+	SDL_RenderPresent(renderer);	
 }
 
 void
@@ -89,7 +86,7 @@ Game::update()
 {
 	// TODO
 	for (int i = 0;i < vehicles.size();i++) vehicles[i]->update();
-	for (int i = 0;i < vehicles.size();i++) logs[i]->update();
+	for (int i = 0;i < logs.size();i++) logs[i]->update();
 }
 
 void
@@ -97,7 +94,7 @@ Game::run()
 {
 	Point2D point = { 200.0f,200.0f };
 	Point2D _point = { 100.0f,100.0f };
-	Vector2D<> v = { 0.1f,0.0f };
+	Vector2D<> v = { 5.0f, 0.0f };
 	Texture* t = textures[2];
 	Texture* _t = textures[8];
 	Vehicle veh(t, point, v);
@@ -109,7 +106,7 @@ Game::run()
 		// TODO: implementar bucle del juego
 		update();
 		render();
-		
+		SDL_Delay(1000 / FRAME_RATE);
 	}
 }
 
