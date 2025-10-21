@@ -97,11 +97,14 @@ Game::run()
 	Vector2D<> v = { 5.0f, 0.0f };
 	Texture* t = textures[2];
 	Texture* _t = textures[8];
+
 	Vehicle veh(t, point, v);
 	vehicles.push_back(&veh);
 
 	Log l(_t, _point, v);
 	logs.push_back(&l);
+
+	
 	while (!exit) {
 		// TODO: implementar bucle del juego
 		update();
@@ -119,8 +122,9 @@ Game::handleEvents()
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_EVENT_QUIT)
 			exit = true;
-
+		
 		// TODO
+
 	}
 }
 

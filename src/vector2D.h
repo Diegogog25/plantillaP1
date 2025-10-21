@@ -24,6 +24,7 @@ public:
 		return {x + otro.x, y + otro.y};
 	}
 
+
 	// TODO: completar
 
 	// Operadores de entrada/salida
