@@ -6,6 +6,7 @@
 #include <istream>
 #include <vector>
 #include "Vehicle.h"
+#include "Log.h"
 
 // Declaraciones anticipadas
 class Texture;
@@ -29,6 +30,12 @@ public:
 		FROG = 0,
 		BACKGROUND,
 		CAR1,
+		CAR2,
+		CAR3,
+		CAR4,
+		CAR5,
+		LOG1,
+		LOG2,
 		NUM_TEXTURES
 
 	};
@@ -47,6 +54,7 @@ private:
 	// Elemento del juego
 	// TODO: añadir atributos para los objetos del juego
 	std::vector <Vehicle*> vehicles;
+	std::vector<Log*> logs;
 public:
 	Game();
 	~Game();

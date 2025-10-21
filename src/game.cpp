@@ -27,7 +27,9 @@ constexpr const char* const imgBase = "../assets/images/";
 
 constexpr array<TextureSpec, Game::NUM_TEXTURES> textureList{
 	TextureSpec{"frog.png", 1, 2},
-	{"background.png"},{"car1.png"}
+	{"background.png"},{"car1.png"},{"car2.png"},
+	{"car3.png"},{"car4.png"},{"car5.png"},{"log1.png"},
+	{"log2.png"}
 };
 
 Game::Game()
@@ -72,8 +74,10 @@ Game::render() const
 	// TODO
 	SDL_FRect destRect{0,0,WINDOW_WIDTH, WINDOW_HEIGHT};
 	textures[1]->render(destRect);
-
 	for (int i = 0;i < vehicles.size();i++) vehicles[i]->render();
+
+
+	for (int i = 0;i < vehicles.size();i++) logs[i]->render();
 
 	SDL_RenderPresent(renderer);
 
@@ -85,18 +89,22 @@ Game::update()
 {
 	// TODO
 	for (int i = 0;i < vehicles.size();i++) vehicles[i]->update();
+	for (int i = 0;i < vehicles.size();i++) logs[i]->update();
 }
 
 void
 Game::run()
 {
 	Point2D point = { 200.0f,200.0f };
+	Point2D _point = { 100.0f,100.0f };
 	Vector2D<> v = { 0.1f,0.0f };
 	Texture* t = textures[2];
-
+	Texture* _t = textures[8];
 	Vehicle veh(t, point, v);
 	vehicles.push_back(&veh);
 
+	Log l(_t, _point, v);
+	logs.push_back(&l);
 	while (!exit) {
 		// TODO: implementar bucle del juego
 		update();
