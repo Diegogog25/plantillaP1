@@ -5,15 +5,14 @@
 int main(int, char**)
 {
     try {
-        Game().run();
+        Game g;
+        g.run();
     }
-    catch (const std::string& e) {
-        std::cerr << "Error: " << e << std::endl;
-        return 1;
+    catch (const char* msg) {
+        SDL_Log("Error: %s", msg);
     }
-    catch (const char* e) {
-        std::cerr << "Error: " << e << std::endl;
-        return 1;
+    catch (const std::string& msg) {
+        SDL_Log("Error: %s", msg.c_str());
     }
     return 0;
 }

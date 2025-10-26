@@ -18,7 +18,6 @@ public:
     void render() const;
     void update();
 
-    // NUEVO
     Collision checkCollision(const SDL_FRect& rect) const;
 
     // Accesores útiles

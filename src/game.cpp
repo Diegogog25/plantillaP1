@@ -1,6 +1,9 @@
 #include "game.h"
 
 #include <string>
+#include <fstream>
+#include <sstream>
+#include <limits>
 #include <SDL3_image/SDL_image.h>
 
 // ----------------- Config de recursos -----------------
@@ -125,26 +128,9 @@ void Game::update()
 
 void Game::run()
 {
-    // -----------------------------------------------------------------
-    // Construcción temporal de objetos de prueba (hasta que cargues el mapa)
-    // ¡OJO! No crear locales y meter &puntero: hay que reservar con new.
-    // -----------------------------------------------------------------
-    frog = new Frog(textures[FROG], Point2D{ 200.f, 440.f }, this);
-
-    vehicles.push_back(new Vehicle(
-        textures[CAR2], Point2D{ 100.f, 350.f }, Vector2D<>{2.f, 0.f}));
-
-    logs.push_back(new Log(
-        textures[LOG2], Point2D{ 50.f, 120.f }, Vector2D<>{1.5f, 0.f}));
-
-    // Avispa de test (5 segundos de vida)
-    wasps.push_back(new Wasp(
-        textures[CAR5], Point2D{ 300.f, 260.f }, Vector2D<>{0.f, 0.f}, 5000));
-
-    // homed de test (una rana ya en casa)
-    homed.push_back(new HomedFrog(textures[FROG], Point2D{ 32.f, 16.f }));
-
-    // -----------------------------------------------------------------
+    // Cargar el mapa desde archivo
+    loadMap(MAP_FILE);
+    if (!frog) throw "map file has no Frog (F entry)"s;
 
     while (!exit) {
         handleEvents();
@@ -170,9 +156,7 @@ void Game::handleEvents()
 
 Collision Game::checkCollision(const SDL_FRect& rect) const
 {
-    // Orden sugerida en el enunciado:
-    // primero ENEMY (vehículos, avispas, ranas en casa),
-    // luego PLATFORM (troncos con velocidad).
+    // Orden: ENEMY primero (vehículos, avispas, ranas en casa), luego PLATFORM (troncos)
     for (auto* v : vehicles) {
         Collision c = v->checkCollision(rect);
         if (c.type != Collision::Type::NONE) return c;
@@ -190,4 +174,80 @@ Collision Game::checkCollision(const SDL_FRect& rect) const
         if (c.type != Collision::Type::NONE) return c;
     }
     return {};
+}
+
+void Game::loadMap(const char* path)
+{
+    // Limpiar estado actual
+    for (auto* v : vehicles) delete v; vehicles.clear();
+    for (auto* l : logs)     delete l; logs.clear();
+    for (auto* w : wasps)    delete w; wasps.clear();
+    for (auto* h : homed)    delete h; homed.clear();
+    if (frog) { delete frog; frog = nullptr; }
+
+    ifstream in(path);
+    if (!in.is_open()) throw "map file not found: "s + path;
+
+    string line;
+    int lineNo = 0;
+
+    while (std::getline(in, line)) {
+        ++lineNo;
+        // Trim inicial simple + saltar comentarios y líneas vacías
+        std::istringstream iss(line);
+        iss >> std::ws;
+        if (!iss.good()) continue;
+        if (iss.peek() == '#') continue;
+
+        char id;
+        if (!(iss >> id)) continue;
+
+        if (id == 'V') {
+            float x, y; float vx; int type;
+            if (!(iss >> x >> y >> vx >> type))
+                throw "map format error (Vehicle) at line "s + std::to_string(lineNo);
+
+            Texture* t = nullptr;
+            switch (type) {
+            case 1: t = textures[CAR1]; break;
+            case 2: t = textures[CAR2]; break;
+            case 3: t = textures[CAR3]; break;
+            case 4: t = textures[CAR4]; break;
+            case 5: t = textures[CAR5]; break;
+            default: t = textures[CAR1]; break;
+            }
+            vehicles.push_back(new Vehicle(
+                t,
+                Point2D{ x, y },
+                Vector2D<>{ vx / FRAME_RATE, 0.f }
+            ));
+        }
+        else if (id == 'L') {
+            float x, y; float vx; int kind = 0;
+            if (!(iss >> x >> y >> vx))
+                throw "map format error (Log) at line "s + std::to_string(lineNo);
+            // kind opcional: 0 => LOG1, 1 => LOG2
+            if (iss >> kind) { /* leído kind si estaba */ }
+
+            Texture* t = (kind == 1) ? textures[LOG2] : textures[LOG1];
+            logs.push_back(new Log(
+                t,
+                Point2D{ x, y },
+                Vector2D<>{ vx / FRAME_RATE, 0.f }
+            ));
+        }
+        else if (id == 'F') {
+            float x, y; int lives = 3;
+            if (!(iss >> x >> y))
+                throw "map format error (Frog) at line "s + std::to_string(lineNo);
+            if (iss >> lives) { /* vidas opcional */ }
+
+            frog = new Frog(Point2D{ x, y }, this);
+            frog->setLives(lives);
+        }
+        else {
+            // Identificador desconocido: lo consideramos error de formato
+            throw "map format error (unknown id) at line "s + std::to_string(lineNo);
+        }
+    }
 }

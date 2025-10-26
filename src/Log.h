@@ -18,8 +18,9 @@ public:
     void render() const;
     void update();
 
-    // NUEVO
+    // Detección de plataforma
     Collision checkCollision(const SDL_FRect& rect) const;
 
     const Vector2D<>& getVel() const { return vel; }
+    const Point2D& getPos() const { return pos; }
 };

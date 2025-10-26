@@ -12,25 +12,25 @@ class Frog
     Point2D startPos; // posición inicial para reset al morir
     Game* game = nullptr;
 
-    // Dirección solicitada (ya no se usa para mover instantáneo, solo para compatibilidad)
+    // Dirección solicitada (solo se usa para iniciar un movimiento)
     Vector2D<> dir{ 0,0 };
-    float speed = 32.f; // distancia por paso
+    float speed = 32.f; // distancia por paso (una "casilla")
 
     int lives = 3;
 
     // Orientación y animación
     float angle = 0.f;
     int   jumpFrames = 0;
-    static constexpr int JUMP_FRAMES = 6; // ~200ms a 30fps
+    static constexpr int JUMP_FRAMES = 6; // también duración del paso suave (6 frames = 200 ms a 30 fps)
 
-    // Movimiento suave por paso (bloquea nuevas teclas hasta terminar)
+    // Movimiento suave por paso (no se puede recalcular hasta terminar)
     bool moving = false;
     int  moveFramesLeft = 0;
     Vector2D<> stepPerFrame{0.f, 0.f};
-    Point2D moveEnd{0.f, 0.f};
+    Point2D moveEnd;
 
 public:
-    Frog(Point2D _pos, Game* _game);
+    Frog(Texture* _texture, Point2D _pos, Game* _game);
     ~Frog();
 
     void render() const;

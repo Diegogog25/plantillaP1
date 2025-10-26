@@ -1,19 +1,18 @@
 #pragma once
-#include "vector2D.h"
 #include "texture.h"
+#include "vector2D.h"
 #include "SDL3/SDL.h"
-#include "Collision.h"
+#include "collision.h"
 
 class Wasp
 {
-private:
     Texture* texture = nullptr;
     Point2D   pos;
     Vector2D<> vel;
-    unsigned long long expireAtMs = 0; // SDL_GetTicksNS()/1e6 + lifetime
+    unsigned long long expireAtMs = 0; // tiempo de caducidad en ms
 
 public:
-    // lifetimeMs: tiempo de vida en milisegundos (como pide el enunciado)
+    // lifetimeMs: tiempo de vida en milisegundos
     Wasp(Texture* t, Point2D p, Vector2D<> v, Uint32 lifetimeMs);
 
     void render() const;

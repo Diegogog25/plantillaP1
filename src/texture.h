@@ -1,93 +1,44 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
-
+#pragma once
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_video.h>
 
-/**
- * Object-oriented wrapper for SDL textures with frame support.
- */
+struct SDL_Texture;
+
 class Texture
 {
-	SDL_Renderer* renderer = nullptr;
-	SDL_Texture* texture = nullptr;
-	int width;
-	int height;
-	int nrows;
-	int ncolumns;
-	int frameWidth;
-	int frameHeight;
+    SDL_Renderer* renderer = nullptr;
+    SDL_Texture* texture = nullptr;
+    int width = 0;
+    int height = 0;
+    int nrows = 1;
+    int ncolumns = 1;
+    int frameWidth = 0;
+    int frameHeight = 0;
 
-	SDL_FRect getFrameRect(int row, int col) const;
+    SDL_FRect getFrameRect(int row, int col) const;
 
 public:
-	Texture(SDL_Renderer* renderer, const char* filename, int rows = 1, int columns = 1);
-	Texture(SDL_Renderer* renderer, SDL_Texture* texture, int rows = 1, int columns = 1);
-	~Texture();
+    Texture(SDL_Renderer* renderer, const char* filename, int rows = 1, int columns = 1);
+    Texture(SDL_Renderer* renderer, SDL_Texture* texture, int rows = 1, int columns = 1);
+    ~Texture();
 
-	Texture(const Texture&) = delete;
-	Texture& operator=(const Texture&) = delete;
-	Texture(Texture&&) noexcept;
-	Texture& operator=(Texture&&) noexcept;
+    Texture(Texture&&) noexcept;
+    Texture& operator=(Texture&&) noexcept;
 
-	/// Width of a frame in pixels
-	int getFrameWidth() const;
-	/// Height of a frame in pixels
-	int getFrameHeight() const;
-	/// Number of frames in each row
-	int getNumRows() const;
-	/// Number of frames in each column
-	int getNumColumns() const;
+    int getFrameWidth() const { return frameWidth; }
+    int getFrameHeight() const { return frameHeight; }
+    int getNumRows() const { return nrows; }
+    int getNumColumns() const { return ncolumns; }
 
-	/// Render the whole picture filling the entire screen
-	void render() const;
-	/// Render the whole picture to the given rectangle
-	void render(const SDL_FRect& target) const;
-	/// Render a rectangle full screen
-	void renderRect(const SDL_FRect& source) const;
-	/// Render the whole picture with additional options from SDL_RenderCopyEx
-	void render(const SDL_FRect& target,
-	            double angle,
-	            const SDL_FPoint* center = nullptr,
-	            SDL_FlipMode flip = SDL_FLIP_NONE) const;
+    void render() const;
+    void render(const SDL_FRect& rect) const;
+    void renderRect(const SDL_FRect& source) const;
+    void render(const SDL_FRect& rect, double angle, const SDL_FPoint* center = nullptr, SDL_FlipMode flip = SDL_FLIP_NONE) const;
 
-	/// Render a frame to the given rectangle
-	void renderFrame(const SDL_FRect& target, int row, int col) const;
-	/// Render a frame to the given rectangle
-	void renderFrame(const SDL_FRect& target, int row, int col, SDL_FlipMode flip) const;
-	/// Render a frame with additional options
-	void renderFrame(const SDL_FRect& target,
-	                 int row,
-	                 int col,
-	                 double angle,
-	                 const SDL_FPoint* center = nullptr,
-	                 SDL_FlipMode flip = SDL_FLIP_NONE) const;
+    void renderFrame(const SDL_FRect& rect, int row, int col) const;
+    void renderFrame(const SDL_FRect& rect, int row, int col, SDL_FlipMode flip) const;
+    void renderFrame(const SDL_FRect& rect, int row, int col, double angle, const SDL_FPoint* center = nullptr, SDL_FlipMode flip = SDL_FLIP_NONE) const;
 
-	/// Render the whole picture to the given rectangle with modified color
-	void render(const SDL_FRect& target, SDL_Color color) const;
+    void render(const SDL_FRect& rect, SDL_Color color) const;
 };
-
-inline int
-Texture::getFrameWidth() const
-{
-	return frameWidth;
-}
-
-inline int
-Texture::getFrameHeight() const
-{
-	return frameHeight;
-}
-
-inline int
-Texture::getNumRows() const
-{
-	return nrows;
-}
-
-inline int
-Texture::getNumColumns() const
-{
-	return ncolumns;
-}
-
-#endif // TEXTURE_H

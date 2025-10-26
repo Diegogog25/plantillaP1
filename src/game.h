@@ -7,6 +7,7 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include <string>
 
 #include "Vehicle.h"
 #include "Log.h"
@@ -14,7 +15,7 @@
 #include "HomedFrog.h"
 #include "Wasp.h"
 #include "texture.h"
-#include "Collision.h"
+#include "collision.h"
 
 /**
  * Clase principal del juego.
@@ -78,14 +79,16 @@ public:
     // Comprueba si hay algún objeto colocado en ese rectángulo (como pide el enunciado)
     Collision checkCollision(const SDL_FRect& rect) const;
 
+    // Carga un mapa desde archivo (borra el estado current)
+    void loadMap(const char* path);
+
     // RNG helper (como en el enunciado)
     int getRandomRange(int min, int max) {
         return std::uniform_int_distribution<int>(min, max)(rng);
     }
 };
 
-inline Texture*
-Game::getTexture(TextureName name) const
+inline Texture* Game::getTexture(TextureName name) const
 {
     return textures[name];
 }
