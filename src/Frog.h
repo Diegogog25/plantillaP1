@@ -7,19 +7,27 @@ class Game;
 
 class Frog
 {
-private:
-	Texture* texture;
-	Point2D pos;
-	Game* game;
-	const float speed = 5;
+    Texture* texture = nullptr;
+    Point2D pos;
+    Game* game = nullptr;
+
+    // Dirección discreta (para movimiento por casillas)
+    Vector2D<> dir{ 0,0 };
+    float speed = 30.f; // tamaño de casilla
+
+    int lives = 3;
 
 public:
-	Frog(Texture* _texture, Point2D _pos, Game* _game);
-	~Frog();
-	void handleEvents(const SDL_Event& _input);
+    Frog(Texture* _texture, Point2D _pos, Game* _game);
+    ~Frog();
 
-	void render()const;
-	void update();
+    void render() const;
+    void update();
+    void handleEvents(const SDL_Event& e);
 
+    const Point2D& getPos() const { return pos; }
+    void setPos(Point2D p) { pos = p; }
+
+    int getLives() const { return lives; }
+    void loseLife() { --lives; }
 };
-

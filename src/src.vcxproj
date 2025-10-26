@@ -101,8 +101,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="Vehicle.cpp" />
+    <ClCompile Include="Wasp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="collision.h" />
     <ClInclude Include="Frog.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="HomedFrog.h" />
@@ -110,6 +112,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="vector2D.h" />
     <ClInclude Include="Vehicle.h" />
+    <ClInclude Include="Wasp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

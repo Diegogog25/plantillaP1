@@ -1,17 +1,19 @@
-//
-// Tecnología de la Programación de Videojuegos 1
-// Facultad de Informática UCM
-//
-// Plantilla de proyecto con SDL
-//
-
 #include "game.h"
+#include <iostream>
+#include <string>
 
-int main(int argc, char* argv[])
+int main(int, char**)
 {
-	Game().run();
-
-	// TODO: manejar excepciones
-
-	return 0;
+    try {
+        Game().run();
+    }
+    catch (const std::string& e) {
+        std::cerr << "Error: " << e << std::endl;
+        return 1;
+    }
+    catch (const char* e) {
+        std::cerr << "Error: " << e << std::endl;
+        return 1;
+    }
+    return 0;
 }
