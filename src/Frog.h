@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 #include "vector2D.h"
 #include "texture.h"
 #include "SDL3/SDL.h"
@@ -9,16 +9,16 @@ class Frog
 {
     Texture* texture = nullptr;
     Point2D pos;
-    Point2D startPos; // posiciÛn inicial para reset al morir
+    Point2D startPos; // posici√≥n inicial para reset al morir
     Game* game = nullptr;
 
-    // DirecciÛn solicitada (ya no se usa para mover instant·neo, solo para compatibilidad)
+    // Direcci√≥n solicitada (ya no se usa para mover instant√°neo, solo para compatibilidad)
     Vector2D<> dir{ 0,0 };
     float speed = 32.f; // distancia por paso
 
     int lives = 3;
 
-    // OrientaciÛn y animaciÛn
+    // Orientaci√≥n y animaci√≥n
     float angle = 0.f;
     int   jumpFrames = 0;
     static constexpr int JUMP_FRAMES = 6; // ~200ms a 30fps
@@ -45,7 +45,7 @@ public:
     void loseLife() { --lives; }
     void setLives(int n) { lives = n; } // requerido por game.cpp
 
-    // Resetea la rana a la posiciÛn inicial
+    // Resetea la rana a la posici√≥n inicial
     void resetToStart() { pos = startPos; dir = {0,0}; moving = false; moveFramesLeft = 0; stepPerFrame = {0,0}; }
 
 };

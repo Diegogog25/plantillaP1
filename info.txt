@@ -1,0 +1,4 @@
+DIEGO GARCÍA ALONSO
+DIEGO JIMENEZ GARCÍA
+No hay ninguna opcional hecha.
+Funciona todo , excepto un bug visual con los troncos.

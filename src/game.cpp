@@ -150,13 +150,21 @@ void Game::run()
     if (!frog) throw "map file has no Frog (F entry)"s;
 
     waspTimer = getRandomRange(20, 50);
+    
+    //Crea 5 homed frogs invisibles al principio
 
     for (int i = 0;i < 5; i++) {
-        HomedFrog* hf = new HomedFrog(getTexture(Game::TextureName::FROG),Point2D(20-6+96*i,20));
+        HomedFrog* hf = new HomedFrog(getTexture(Game::TextureName::FROG),Point2D(firstH-6+spaceH*i,houseY - 6));
         homed.push_back(hf);
     }
-
+    
     while (!exit && frog->getLives() > 0) {
+        int i = 0;
+        while(i < 5 && !exit) {  
+            if (!homed[i]->house()) i = 7;
+            i++;
+        }
+        if (i == 5) exit = true;
         handleEvents();
         update();
         render();

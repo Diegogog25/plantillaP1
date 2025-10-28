@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "vector2D.h"
 #include "texture.h"
 #include "SDL3/SDL.h"
@@ -18,7 +18,7 @@ public:
     void render() const;
     void update();
 
-    // Detecci�n de plataforma
+    // Detección de plataforma
     Collision checkCollision(const SDL_FRect& rect) const;
 
     const Vector2D<>& getVel() const { return vel; }

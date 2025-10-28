@@ -1,4 +1,4 @@
-#include "Log.h"
+﻿#include "Log.h"
 #include "game.h"
 #include <algorithm>
 
@@ -49,7 +49,7 @@ Collision Log::checkCollision(const SDL_FRect& rect) const {
     };
 
     // Recorta ligeramente el AABB del tronco para evitar que la rana
-    // "enganche" por los bordes cuando est� al lado y no encima.
+    // "enganche" por los bordes cuando está al lado y no encima.
     const float insetX = me.w * 0.15f;      // ~15% por cada lado
     const float insetTop = me.h * 0.10f;    // ~10% arriba
     const float insetBottom = me.h * 0.10f; // ~10% abajo

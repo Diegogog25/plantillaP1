@@ -127,7 +127,7 @@ void Frog::handleEvents(const SDL_Event& e) {
         }
         if (dx == 0 && dy == 0) return;
 
-        // Validación de límites en una sola condición (sin variables intermedias)
+        // Comprobar limites
         constexpr float UI_HEIGHT = 36.0f; // altura de la barra negra
         if (pos.getX() + dx * speed < 0.0f ||
             pos.getX() + dx * speed + texture->getFrameWidth()  >(float)Game::WINDOW_WIDTH ||

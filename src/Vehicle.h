@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "vector2D.h"
 #include "texture.h"
 #include "SDL3/SDL.h"
@@ -20,7 +20,7 @@ public:
 
     Collision checkCollision(const SDL_FRect& rect) const;
 
-    // Accesores �tiles
+    // Accesores útiles
     const Point2D& getPos() const { return pos; }
     const Vector2D<>& getVel() const { return vel; }
     void setPos(Point2D p) { pos = p; }

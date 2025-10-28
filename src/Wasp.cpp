@@ -16,8 +16,6 @@ void Wasp::render() const {
 }
 
 void Wasp::update() {
-    // La avispa puede moverse o quedarse parada (velocidad = 0)
-    pos = pos + vel;
 }
 
 bool Wasp::isAlive() const {

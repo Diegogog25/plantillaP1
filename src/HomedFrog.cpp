@@ -18,16 +18,14 @@ Collision HomedFrog::checkCollision(const SDL_FRect& rect) {
                   (float)texture->getFrameWidth(),
                   (float)texture->getFrameHeight() };
     if (SDL_HasRectIntersectionFloat(&rect, &me)) {
+     //Comprueba si esta en casa o no, para hacer visible la homed frog o no
         if (inHouse) {
             h = Collision{ Collision::Type::ENEMY, {} };
-
         }
         else {
             h = Collision{ Collision::Type::HOME, {} };
             inHouse = true;
         }       
-
-
     }
     return h;
 }
