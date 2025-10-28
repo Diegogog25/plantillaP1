@@ -61,11 +61,15 @@ void Frog::update() {
     Collision c = game->checkCollision(collider);
 
     if (moving) {
-        // En el aire: solo enemigos te pueden matar
+        // En el aire te pueden matar enemigos o llegar a casa
         if (c.type == Collision::Type::ENEMY) {
             loseLife();
             resetToStart();
             return;
+        }
+        else if (c.type == Collision::Type::HOME){
+                resetToStart();
+                return; 
         }
         return; // ignorar plataforma/agua durante el salto
     }
@@ -89,6 +93,13 @@ void Frog::update() {
         // No hacer clamp aquí: queremos que morir suceda si se sale
         break;
     }
+    case Collision::Type::HOME:
+        // Ahogarse solo cuando estás parado (no en mitad del salto)
+        if (collider.y < Game::RIVER_LOW) {
+            resetToStart();
+            return;
+        }
+        break;
 
     case Collision::Type::NONE:
     default:

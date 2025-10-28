@@ -29,6 +29,7 @@ class Frog
     Vector2D<> stepPerFrame{0.f, 0.f};
     Point2D moveEnd{0.f, 0.f};
 
+
 public:
     Frog(Point2D _pos, Game* _game);
     ~Frog();
@@ -46,4 +47,5 @@ public:
 
     // Resetea la rana a la posición inicial
     void resetToStart() { pos = startPos; dir = {0,0}; moving = false; moveFramesLeft = 0; stepPerFrame = {0,0}; }
+
 };

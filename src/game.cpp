@@ -32,7 +32,8 @@ constexpr array<TextureSpec, Game::NUM_TEXTURES> textureList{
     {"car4.png"},
     {"car5.png"},
     {"log1.png"},
-    {"log2.png"}
+    {"log2.png"},
+    {"wasp.png"}
 };
 
 // ----------------- Implementación Game -----------------
@@ -113,7 +114,23 @@ void Game::update()
     for (auto* l : logs)     l->update();
     for (auto* w : wasps)    w->update();
     if (frog) frog->update();
+    //Si avispas llega a 0 , crea una en una posicion
+    waspTimer--;
+    if (waspTimer <= 0) {
+        vector<int> spawn;
+        for (int i = 0; i < homed.size(); i++)
+        {
+            if (!homed[i]->house())
+                spawn.push_back(i);
+        }
 
+        int time = getRandomRange(minTime, maxTime);
+
+        int random = getRandomRange(0, spawn.size() - 1);
+        Wasp* was = new Wasp(getTexture(WASP), Point2D(firstH + spaceH * spawn[random], houseY),time);
+        wasps.push_back(was);
+        waspTimer = getRandomRange(maxTime, maxSpawn);
+    }
     // Elimina avispas caducadas (delete + erase)
     for (size_t i = 0; i < wasps.size(); /*i++ dentro*/) {
         if (!wasps[i]->isAlive()) {
@@ -132,7 +149,14 @@ void Game::run()
     loadMap(MAP_FILE);
     if (!frog) throw "map file has no Frog (F entry)"s;
 
-    while (!exit) {
+    waspTimer = getRandomRange(20, 50);
+
+    for (int i = 0;i < 5; i++) {
+        HomedFrog* hf = new HomedFrog(getTexture(Game::TextureName::FROG),Point2D(20-6+96*i,20));
+        homed.push_back(hf);
+    }
+
+    while (!exit && frog->getLives() > 0) {
         handleEvents();
         update();
         render();

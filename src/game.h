@@ -42,6 +42,7 @@ public:
         CAR5,
         LOG1,
         LOG2,
+        WASP,
         NUM_TEXTURES
     };
 
@@ -51,6 +52,14 @@ private:
     std::array<Texture*, NUM_TEXTURES> textures{};
 
     bool exit;
+    //Constantes avispas
+    static constexpr int firstH = 20;
+    static constexpr int spaceH = 96;
+    static constexpr int houseY = 26;
+    static constexpr int maxTime = 1000;
+    static constexpr int minTime = 200;
+    static constexpr int maxSpawn = 1200;
+    int waspTimer;
 
     // Objetos del juego (propiedad de Game: se crean con new y se liberan en ~Game)
     std::vector<Vehicle*>    vehicles;

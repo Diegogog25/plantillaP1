@@ -13,7 +13,7 @@ class Wasp
 
 public:
     // lifetimeMs: tiempo de vida en milisegundos
-    Wasp(Texture* t, Point2D p, Vector2D<> v, Uint32 lifetimeMs);
+    Wasp(Texture* t, Point2D p, Uint32 lifetimeMs);
 
     void render() const;
     void update();
