@@ -6,7 +6,6 @@ class Crosser : public SceneObject
 {
 protected:
     Vector2D<> vel;
-    Point2D pos;
     float leftLimit;
     float rightLimit;
 

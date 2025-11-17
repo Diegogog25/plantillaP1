@@ -1,11 +1,11 @@
 ﻿#include "Log.h"
 
 Log::Log(Game* g, Texture* tex,
-    float x, float y,
+    Point2D pos,
     float vx,
     float leftSpan, float rightSpan)
     : Platform(g, tex,
-        x, y,
+        pos,
         (float)tex->getFrameWidth(),
         (float)tex->getFrameHeight(),
         Vector2D<>{vx, 0.0f},

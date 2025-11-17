@@ -2,12 +2,12 @@
 #include <SDL3/SDL.h> 
 
 TurtleGroup::TurtleGroup(Game* g, Texture* tex,
-    float x, float y,
+    Point2D pos,
     float w, float h,
     float vx,
     float leftSpan, float rightSpan,
     int n, bool sink)
-    : Platform(g, tex, x, y, w, h, { vx, 0.0f }, leftSpan, rightSpan)
+    : Platform(g, tex, pos, w, h, { vx, 0.0f }, leftSpan, rightSpan)
     , numTurtles(n)
     , submerging(sink)
 {}
@@ -25,7 +25,7 @@ void TurtleGroup::render() const {
     if (submerging && sunk) return;
 
     for (int i = 0; i < numTurtles; ++i) {
-        SDL_FRect dst{ x + i * w, y, w, h };
+        SDL_FRect dst{ pos.getX() + i * w, pos.getY(), w, h};
         tex->renderFrame(dst, 0, 0);
     }
 }
@@ -34,7 +34,7 @@ Collision TurtleGroup::checkCollision(const SDL_FRect& other) const {
     if (submerging && sunk) return {};
 
     for (int i = 0; i < numTurtles; ++i) {
-        SDL_FRect me{ x + i * w, y, w, h };
+        SDL_FRect me{ pos.getX() + i * w, pos.getY(), w, h };
 
         if (SDL_HasRectIntersectionFloat(&me, &other))
             return { Collision::Type::PLATFORM, vel };

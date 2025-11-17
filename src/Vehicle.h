@@ -8,7 +8,7 @@ class Vehicle : public Crosser {
 public:
     // Constructor: g, tex, x, y, vx, leftSpan, rightSpan
     Vehicle(Game* g, Texture* tex,
-        float x, float y,
+        Point2D pos,
         float vx,
         float leftSpan, float rightSpan)
         : Crosser(g, tex,

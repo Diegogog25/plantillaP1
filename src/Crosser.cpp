@@ -3,11 +3,11 @@
 #include "Texture.h"
 
 Crosser::Crosser(Game* g, Texture* tex,
-    float X, float Y,
+    Point2D pos,
     float W, float H,
     Vector2D<> v,
     float left, float right)
-    : SceneObject(g, tex, X, Y, W, H),
+    : SceneObject(g, tex, pos, W, H),
     vel(v),
     leftLimit(left),
     rightLimit(right)
@@ -16,14 +16,12 @@ Crosser::Crosser(Game* g, Texture* tex,
 
 void Crosser::update()
 {
-    x += vel.getX();
-    y += vel.getY();
+    pos += vel;
+    if (vel.getX() > 0 && pos.getX() > rightLimit)
+        pos.setX(leftLimit);
 
-    if (vel.getX() > 0 && x > rightLimit)
-        x = leftLimit;
-
-    else if (vel.getX() < 0 && x + w < leftLimit)
-        x = rightLimit;
+    else if (vel.getX() < 0 && pos.getX() + w < leftLimit)
+        pos.setX(rightLimit);
 }
 
 const Vector2D<>& Crosser::getVel() const

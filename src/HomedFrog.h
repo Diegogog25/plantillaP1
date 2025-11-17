@@ -4,8 +4,8 @@
 class HomedFrog : public SceneObject {
     bool inHouse = false;
 public:
-    HomedFrog(Game* g, Texture* t, float X, float Y)
-        : SceneObject(g, t, X, Y,
+    HomedFrog(Game* g, Texture* t, Point2D pos)
+        : SceneObject(g, t, pos,
             (float)t->getFrameWidth(),
             (float)t->getFrameHeight()) {
     }

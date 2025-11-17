@@ -16,7 +16,7 @@ private:
 
 public:
     TurtleGroup(Game* g, Texture* tex,
-        float x, float y,
+        Point2D pos,
         float w, float h,
         float vx,
         float leftSpan, float rightSpan,

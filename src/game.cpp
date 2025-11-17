@@ -89,6 +89,7 @@ void Game::loadMap(const char* path)
         ss >> id;
 
         float x, y, vx;
+		Point2D pos;
         int type = 1; // valor por defecto para logs
 
         float leftSpan = -150.0f;
@@ -99,7 +100,9 @@ void Game::loadMap(const char* path)
         case 'F': {
             if (!(ss >> x >> y))
                 throw FileFormatError(path, lineNum, "Invalid Frog line");
-            frog = new Frog(this, textures[FROG], x, y);
+			pos.setX(x);
+			pos.setY(y);
+            frog = new Frog(this, textures[FROG], pos);
             addObject(frog);
             break;
         }
@@ -115,9 +118,11 @@ void Game::loadMap(const char* path)
                 (type == 4) ? textures[CAR4] :
                 textures[CAR5];
 
+			pos.setX(x);
+			pos.setY(y);
             addObject(
                 new Vehicle(this, t,
-                    x, y,
+                    pos,
                     vx / FRAME_RATE,
                     leftSpan, rightSpan)
             );
@@ -137,10 +142,11 @@ void Game::loadMap(const char* path)
             }
 
             Texture* t = (type == 2) ? textures[LOG2] : textures[LOG1];
-
+			pos.setX(x); 
+            pos.setY(y);
             addObject(
                 new Log(this, t,
-                    x, y,
+                    pos,
                     vx / FRAME_RATE,
                     leftSpan, rightSpan)
             );
@@ -154,10 +160,12 @@ void Game::loadMap(const char* path)
 
             if (!(ss >> x >> y >> vx >> n >> sink))
                 throw FileFormatError(path, lineNum, "Invalid TurtleGroup line");
-
+            
+			pos.setX(x);
+			pos.setY(y);
             addObject(
                 new TurtleGroup(this, textures[LOG2],
-                    x, y,
+                    pos,
                     w, h,
                     vx / FRAME_RATE,
                     leftSpan, rightSpan,

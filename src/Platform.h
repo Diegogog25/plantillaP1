@@ -5,10 +5,11 @@ class Platform : public Crosser
 {
 public:
     Platform(Game* g, Texture* tex,
+		Point2D pos,
         float W, float H,
         Vector2D<> v,
         float left, float right)
-        : Crosser(g, tex, X, Y, W, H, v, left, right)
+        : Crosser(g, tex, pos, W, H, v, left, right)
     {
     }
 
