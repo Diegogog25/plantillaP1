@@ -1,26 +1,16 @@
-﻿#pragma once
-#include "vector2D.h"
-#include "texture.h"
-#include "SDL3/SDL.h"
-#include "collision.h"
+﻿// Log.h
+#pragma once
+#include "Platform.h"
 
-class Log
-{
-private:
-    Texture* texture;
-    Point2D pos;
-    Vector2D<> vel;
-
+class Log : public Platform {
 public:
-    Log(Texture* _texture, Point2D _pos, Vector2D<> _vel);
-    ~Log();
+    // Heredar el constructor de Platform:
+    // Log(Game* g, Texture* t, float x, float y, float w, float h,
+    //     float vx, float vy, float span)
+    using Platform::Platform;
 
-    void render() const;
-    void update();
-
-    // Detección de plataforma
-    Collision checkCollision(const SDL_FRect& rect) const;
-
-    const Vector2D<>& getVel() const { return vel; }
-    const Point2D& getPos() const { return pos; }
+    // Si quisieras un comportamiento especial,
+    // podrías sobreescribir render() o checkCollision() aquí.
+    // Pero no es obligatorio.
 };
+

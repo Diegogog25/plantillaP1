@@ -1,25 +1,23 @@
 #pragma once
-#include "texture.h"
-#include "vector2D.h"
-#include "SDL3/SDL.h"
-#include "collision.h"
+#include "SceneObject.h"
 
-class Wasp
-{
-    Texture* texture = nullptr;
-    Point2D   pos;
-    Vector2D<> vel;
-    unsigned long long expireAtMs = 0; // tiempo de caducidad en ms
-
+class Wasp : public SceneObject {
+    unsigned long long expireAtMs = 0;
 public:
-    // lifetimeMs: tiempo de vida en milisegundos
-    Wasp(Texture* t, Point2D p, Uint32 lifetimeMs);
+    Wasp(Game* g, Texture* t, float X, float Y, unsigned ms)
+        : SceneObject(g, t, X, Y, (float)t->getFrameWidth(), (float)t->getFrameHeight())
+    {
+        expireAtMs = (unsigned long long)(SDL_GetTicksNS() / 1000000ULL) + ms;
+    }
 
-    void render() const;
-    void update();
+    void update() override;
+    void render() const override { SceneObject::render(); }
     bool isAlive() const;
-    Collision checkCollision(const SDL_FRect& rect) const;
 
-    const Point2D& getPos() const { return pos; }
-    const Vector2D<>& getVel() const { return vel; }
+    Collision checkCollision(const SDL_FRect& other) const override {
+        SDL_FRect me = bbox();
+        if (SDL_HasRectIntersectionFloat(&me, &other))
+            return { Collision::Type::ENEMY, {} };
+        return {};
+    }
 };

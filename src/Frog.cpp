@@ -1,146 +1,69 @@
 ﻿#include "Frog.h"
 #include "game.h"
-#include "collision.h"
-#include <SDL3/SDL.h>
-#include <algorithm>
 #include <cmath>
 
-Frog::Frog(Point2D _pos, Game* _game) {
-	Game::TextureName tname = Game::TextureName::FROG;
-	game = _game;
-    texture = game->getTexture(tname),
-    pos = _pos,
-    startPos = _pos,
-    game = _game;
-}
-    
-
-Frog::~Frog() {}
-
 void Frog::render() const {
-    SDL_FRect destRect{
-        pos.getX(),
-        pos.getY(),
-        (float)texture->getFrameWidth(),
-        (float)texture->getFrameHeight()
-    };
-
-    // 0 = quieta, 1 = salto/movimiento
+    SDL_FRect r{ x, y, w, h };
     const int col = (moving || jumpFrames > 0) ? 1 : 0;
-
-    // Centro RELATIVO al rect destino (SDL3)
-    SDL_FPoint center{ destRect.w * 0.5f, destRect.h * 0.5f };
-
-    float a = std::fmod(angle, 360.0f);
-    if (a < 0.0f) a += 360.0f;
-
-    texture->renderFrame(destRect, 0, col, a, &center, SDL_FLIP_NONE);
+    SDL_FPoint center{ r.w * 0.5f, r.h * 0.5f };
+    float a = std::fmod(angle, 360.0f); if (a < 0) a += 360.0f;
+    tex->renderFrame(r, 0, col, a, &center, SDL_FLIP_NONE);
 }
 
 void Frog::update() {
-    // 1) Avance del paso suave a 30 FPS
     if (moving) {
-        pos = pos + stepPerFrame;
-        if (--moveFramesLeft <= 0) {
-            moving = false; // no forzar moveEnd
-        }
+        x += stepX; y += stepY;
+        if (--framesLeft <= 0) moving = false;
+        if (jumpFrames > 0) --jumpFrames;
     }
 
-    // Animación acoplada al movimiento
-    if (jumpFrames > 0) --jumpFrames;
+    SDL_FRect box{ x, y + 8.f, w, std::max(1.f, h - 16.f) };
 
-    // 2) Límites de ventana (solo para movimiento propio; el arrastre del tronco se gestiona abajo)
-    const float w = (float)texture->getFrameWidth();
-    const float h = (float)texture->getFrameHeight();
-
-    // 3) Colisiones (AABB con margen vertical global)
-    const float vMargin = 8.0f;
-    const float ch = std::max(1.0f, h - 2.0f * vMargin);
-    SDL_FRect collider{ pos.getX(), pos.getY() + vMargin, w, ch };
-
-    Collision c = game->checkCollision(collider);
-
+    // 1ª pasada: ENEMY/HOME
+    Collision c = game->checkCollision(box);
     if (moving) {
-        // En el aire te pueden matar enemigos o llegar a casa
-        if (c.type == Collision::Type::ENEMY) {
-            loseLife();
-            resetToStart();
-            return;
-        }
-        else if (c.type == Collision::Type::HOME){
-                resetToStart();
-                return; 
-        }
-        return; // ignorar plataforma/agua durante el salto
+        if (c.type == Collision::Type::ENEMY) { loseLife(); reset(); return; }
+        if (c.type == Collision::Type::HOME) { reset(); return; } // Game marcará nido ocupado
+        return;
     }
 
     switch (c.type) {
-    case Collision::Type::ENEMY:
-        loseLife();
-        resetToStart();
-        return;
-
-    case Collision::Type::PLATFORM: {
-        // Arrastre horizontal del tronco
-        pos = pos + Vector2D<>{ c.platformVel.getX(), 0.0f };
-
-        // Si el arrastre te saca de la pantalla, muere y reinicia
-        if (pos.getX() < 0.0f || (pos.getX() + w) > (float)Game::WINDOW_WIDTH) {
-            loseLife();
-            resetToStart();
-            return;
-        }
-        // No hacer clamp aquí: queremos que morir suceda si se sale
-        break;
+    case Collision::Type::ENEMY: loseLife(); reset(); return;
+    case Collision::Type::HOME:  reset(); return;
+    default: break;
     }
-    case Collision::Type::HOME:
-        // Ahogarse solo cuando estás parado (no en mitad del salto)
-        if (collider.y < Game::RIVER_LOW) {
-            resetToStart();
-            return;
-        }
-        break;
 
-    case Collision::Type::NONE:
-    default:
-        // Ahogarse solo cuando estás parado (no en mitad del salto)
-        if (collider.y < Game::RIVER_LOW) {
-            loseLife();
-            resetToStart();
-            return;
-        }
-        break;
+    // 2ª pasada: PLATFORM (arrastre)
+    Collision p = game->checkPlatform(box);
+    if (p.type == Collision::Type::PLATFORM) {
+        x += p.platformVel.getX();
+        if (x < 0 || x + w > Game::WINDOW_WIDTH) { loseLife(); reset(); return; }
+    }
+    else {
+        // agua
+        if (y < Game::RIVER_LOW) { loseLife(); reset(); return; }
     }
 }
 
 void Frog::handleEvents(const SDL_Event& e) {
-    if (e.type == SDL_EVENT_KEY_DOWN && !e.key.repeat) {
-        if (moving || jumpFrames > 0) return; // no aceptar mientras se mueve o anima
+    if (e.type != SDL_EVENT_KEY_DOWN || e.key.repeat) return;
+    if (moving || jumpFrames > 0) return;
 
-        int dx = 0, dy = 0;
-        switch (e.key.key) {
-        case SDLK_UP:    case SDLK_W: dy = -1; angle = 0.0f;   break;
-        case SDLK_DOWN:  case SDLK_S: dy = 1; angle = 180.0f; break;
-        case SDLK_LEFT:  case SDLK_A: dx = -1; angle = 270.0f; break;
-        case SDLK_RIGHT: case SDLK_D: dx = 1; angle = 90.0f;  break;
-        default: break;
-        }
-        if (dx == 0 && dy == 0) return;
-
-        // Comprobar limites
-        constexpr float UI_HEIGHT = 36.0f; // altura de la barra negra
-        if (pos.getX() + dx * speed < 0.0f ||
-            pos.getX() + dx * speed + texture->getFrameWidth()  >(float)Game::WINDOW_WIDTH ||
-            pos.getY() + dy * speed < 0.0f ||
-            pos.getY() + dy * speed + texture->getFrameHeight() >(float)Game::WINDOW_HEIGHT - UI_HEIGHT) {
-            return; // el salto sacaría fuera ⇒ no iniciar
-        }
-
-        // Iniciar movimiento (sin fijar pos final para evitar “snap”)
-        stepPerFrame = Vector2D<>{ (dx * speed) / (float)JUMP_FRAMES,
-                                   (dy * speed) / (float)JUMP_FRAMES };
-        moveFramesLeft = JUMP_FRAMES;
-        moving = true;
-        jumpFrames = JUMP_FRAMES;
+    int dx = 0, dy = 0;
+    switch (e.key.key) {
+    case SDLK_W: case SDLK_UP:    dy = -1; angle = 0.f; break;
+    case SDLK_S: case SDLK_DOWN:  dy = 1; angle = 180.f; break;
+    case SDLK_A: case SDLK_LEFT:  dx = -1; angle = 270.f; break;
+    case SDLK_D: case SDLK_RIGHT: dx = 1; angle = 90.f; break;
+    default: return;
     }
+
+    float nx = x + dx * cell, ny = y + dy * cell;
+    if (nx < 0 || nx + w > Game::WINDOW_WIDTH) return;
+    if (ny < 0 || ny + h > Game::WINDOW_HEIGHT - uiH) return;
+
+    stepX = (dx * cell) / (float)JUMP_FRAMES;
+    stepY = (dy * cell) / (float)JUMP_FRAMES;
+    framesLeft = JUMP_FRAMES;
+    moving = true; jumpFrames = JUMP_FRAMES;
 }

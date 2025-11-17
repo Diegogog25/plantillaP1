@@ -1,27 +1,31 @@
 ﻿#pragma once
-#include "vector2D.h"
-#include "texture.h"
-#include "SDL3/SDL.h"
-#include "collision.h"
+#include "Crosser.h"
 
-class Vehicle
-{
-private:
-    Texture* texture;
-    Point2D pos;
-    Vector2D<> vel;
+// declaración adelantada para que el parámetro Game* sea válido
+class Game;
 
+class Vehicle : public Crosser {
 public:
-    Vehicle(Texture* _texture, Point2D _pos, Vector2D<> _vel);
-    ~Vehicle();
+    // span izquierda/derecha se pasa desde Game (no usamos Game::WINDOW_WIDTH aquí)
+    Vehicle(Game* g, Texture* tex,
+        float X, float Y,
+        float VX,
+        float leftSpan, float rightSpan)
+        : Crosser(g, tex,
+            X, Y,
+            (float)tex->getFrameWidth(),
+            (float)tex->getFrameHeight(),
+            Vector2D<>{VX, 0.f},
+            leftSpan, rightSpan)
+    {
+    }
 
-    void render() const;
-    void update();
+    void render() const override { SceneObject::render(); }
 
-    Collision checkCollision(const SDL_FRect& rect) const;
-
-    // Accesores útiles
-    const Point2D& getPos() const { return pos; }
-    const Vector2D<>& getVel() const { return vel; }
-    void setPos(Point2D p) { pos = p; }
+    Collision checkCollision(const SDL_FRect& other) const override {
+        SDL_FRect me = getRect();
+        if (SDL_HasRectIntersectionFloat(&me, &other))
+            return { Collision::Type::ENEMY, {} };
+        return {};
+    }
 };

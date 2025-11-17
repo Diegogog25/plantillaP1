@@ -1,18 +1,18 @@
 #include "game.h"
-#include <iostream>
+#include "Errors.h"
 #include <string>
 
-int main(int, char**)
-{
+int main(int, char**) {
     try {
-        Game g;
-        g.run();
+        Game().run();
     }
-    catch (const char* msg) {
-        SDL_Log("Error: %s", msg);
+    catch (const GameError& e) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Game Error", e.what(), nullptr);
+        return 1;
     }
-    catch (const std::string& msg) {
-        SDL_Log("Error: %s", msg.c_str());
+    catch (const std::exception& e) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", e.what(), nullptr);
+        return 1;
     }
     return 0;
 }
