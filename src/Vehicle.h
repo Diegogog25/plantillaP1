@@ -1,26 +1,30 @@
 ﻿#pragma once
 #include "Crosser.h"
 
-// declaración adelantada para que el parámetro Game* sea válido
+// Declaración adelantada, solo usamos Game*
 class Game;
 
 class Vehicle : public Crosser {
 public:
-    // span izquierda/derecha se pasa desde Game (no usamos Game::WINDOW_WIDTH aquí)
+    // Constructor: g, tex, x, y, vx, leftSpan, rightSpan
     Vehicle(Game* g, Texture* tex,
-        float X, float Y,
-        float VX,
+        float x, float y,
+        float vx,
         float leftSpan, float rightSpan)
         : Crosser(g, tex,
-            X, Y,
+            x, y,
             (float)tex->getFrameWidth(),
             (float)tex->getFrameHeight(),
-            Vector2D<>{VX, 0.f},
+            Vector2D<>{vx, 0.0f},
             leftSpan, rightSpan)
     {
     }
 
-    void render() const override { SceneObject::render(); }
+    ~Vehicle() override = default;
+
+    void render() const override {
+        SceneObject::render();
+    }
 
     Collision checkCollision(const SDL_FRect& other) const override {
         SDL_FRect me = getRect();

@@ -1,16 +1,24 @@
-﻿// Log.h
-#pragma once
+﻿#pragma once
 #include "Platform.h"
+
+// Declaración adelantada opcional
+class Game;
 
 class Log : public Platform {
 public:
-    // Heredar el constructor de Platform:
-    // Log(Game* g, Texture* t, float x, float y, float w, float h,
-    //     float vx, float vy, float span)
-    using Platform::Platform;
+    // Constructor: g, tex, x, y, vx, leftSpan, rightSpan
+    Log(Game* g, Texture* tex,
+        float x, float y,
+        float vx,
+        float leftSpan, float rightSpan)
+        : Platform(g, tex,
+            x, y,
+            (float)tex->getFrameWidth(),
+            (float)tex->getFrameHeight(),
+            Vector2D<>{vx, 0.0f},
+            leftSpan, rightSpan)
+    {
+    }
 
-    // Si quisieras un comportamiento especial,
-    // podrías sobreescribir render() o checkCollision() aquí.
-    // Pero no es obligatorio.
+    ~Log() override = default;
 };
-

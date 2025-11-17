@@ -2,7 +2,8 @@
 #include "SceneObject.h"
 #include "vector2D.h"
 
-class Crosser : public SceneObject {
+class Crosser : public SceneObject
+{
 protected:
     Vector2D<> vel;
     float leftLimit;
@@ -21,7 +22,10 @@ public:
     {
     }
 
-    void update() override {
+    ~Crosser() override = default;
+
+    void update() override
+    {
         x += vel.getX();
         y += vel.getY();
 

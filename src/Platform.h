@@ -1,25 +1,24 @@
 #pragma once
-#include "vector2D.h"
-#include "texture.h"
-#include "SDL3/SDL.h"
-#include "collision.h"
+#include "Crosser.h"
 
-// Clase base para troncos y grupos de tortugas
-class Platform
+class Platform : public Crosser
 {
-protected:
-    Texture* texture = nullptr;
-    Point2D   pos;
-    Vector2D<> vel;
-
 public:
-    Platform(Texture* tex, Point2D p, Vector2D<> v);
-    virtual ~Platform();
+    Platform(Game* g, Texture* tex,
+        float X, float Y,
+        float W, float H,
+        Vector2D<> v,
+        float left, float right)
+        : Crosser(g, tex, X, Y, W, H, v, left, right)
+    {
+    }
 
-    virtual void render() const;
-    virtual void update();
-    virtual Collision checkCollision(const SDL_FRect& rect) const;
+    ~Platform() override = default;
 
-    const Vector2D<>& getVel() const { return vel; }
-    const Point2D& getPos() const { return pos; }
+    Collision checkCollision(const SDL_FRect& o) const override {
+        SDL_FRect me = getRect();
+        if (SDL_HasRectIntersectionFloat(&me, &o))
+            return { Collision::Type::PLATFORM, vel };
+        return {};
+    }
 };
