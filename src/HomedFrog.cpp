@@ -1,6 +1,4 @@
 #include "HomedFrog.h"
-// Todo inline en el .h
-#include "HomedFrog.h"
 
 HomedFrog::HomedFrog(Game* g, Texture* t, Point2D pos)
     : SceneObject(g, t, pos,

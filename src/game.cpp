@@ -189,10 +189,19 @@ void Game::handleEvents()
         if (e.type == SDL_EVENT_QUIT)
             exit = true;
 
-        // Reiniciar con tecla R
-        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_R) {
-            reset();
-            return;
+        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_0)
+        {
+            SDL_Keymod mods = SDL_GetModState();
+            bool ctrlDown = (mods & SDL_KMOD_CTRL) != 0;
+
+            const bool* keys = SDL_GetKeyboardState(nullptr);
+            bool qDown = keys[SDL_SCANCODE_Q] != 0;
+
+            if (ctrlDown && qDown)
+            {
+                reset();
+                return; // evitamos procesar más eventos antiguos
+            }
         }
 
         if (frog)
