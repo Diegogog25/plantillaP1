@@ -27,24 +27,25 @@ constexpr array<TexSpec, Game::NUM_TEXTURES> texList{
 
 Game::Game()
 {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        throw string("SDL_Init: ") + SDL_GetError();
+    if (!SDL_Init(SDL_INIT_VIDEO))
+        throw SDLError("SDL_Init");
 
     window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     if (!window)
-        throw string("SDL_CreateWindow: ") + SDL_GetError();
+        throw SDLError("SDL_CreateWindow");
 
     renderer = SDL_CreateRenderer(window, nullptr);
     if (!renderer)
-        throw string("SDL_CreateRenderer: ") + SDL_GetError();
+        throw SDLError("SDL_CreateRenderer");
 
     for (size_t i = 0; i < textures.size(); ++i)
     {
-        auto [name, rows, cols] = texList[i];
+        auto [name, rows, cols] = ::texList[i];
         string path = string(IMG_DIR) + name;
         textures[i] = new Texture(renderer, path.c_str(), rows, cols);
     }
 }
+
 
 Game::~Game()
 {
@@ -71,11 +72,16 @@ void Game::reset()
 void Game::loadMap(const char* path)
 {
     ifstream file(path);
-    if (!file) throw string("No se puede abrir el mapa: ") + path;
+    if (!file)
+        throw FileNotFoundError(path);
 
     string line;
+    int lineNum = 0;
+
     while (getline(file, line))
     {
+        ++lineNum;
+
         if (line.empty() || line[0] == '#') continue;
 
         stringstream ss(line);
@@ -83,22 +89,24 @@ void Game::loadMap(const char* path)
         ss >> id;
 
         float x, y, vx;
-        int type;
+        int type = 1; // valor por defecto para logs
 
         float leftSpan = -150.0f;
         float rightSpan = WINDOW_WIDTH + 150.0f;
 
         switch (id)
         {
-        case 'F': { // Frog
-            ss >> x >> y;
+        case 'F': {
+            if (!(ss >> x >> y))
+                throw FileFormatError(path, lineNum, "Invalid Frog line");
             frog = new Frog(this, textures[FROG], x, y);
             addObject(frog);
             break;
         }
 
-        case 'V': { // Vehicle
-            ss >> x >> y >> vx >> type;
+        case 'V': {
+            if (!(ss >> x >> y >> vx >> type))
+                throw FileFormatError(path, lineNum, "Invalid Vehicle line");
 
             Texture* t =
                 (type == 1) ? textures[CAR1] :
@@ -116,8 +124,17 @@ void Game::loadMap(const char* path)
             break;
         }
 
-        case 'L': { // Log
-            ss >> x >> y >> vx >> type;
+        case 'L': {
+            if (!(ss >> x >> y >> vx))   // SIN type en el mapa original
+                throw FileFormatError(path, lineNum, "Invalid Log line");
+
+            // Si quieres soportar un campo opcional:
+            if (ss >> type) {
+                // si hay un entero al final, lo usamos
+            }
+            else {
+                type = 1; // por defecto
+            }
 
             Texture* t = (type == 2) ? textures[LOG2] : textures[LOG1];
 
@@ -130,12 +147,13 @@ void Game::loadMap(const char* path)
             break;
         }
 
-        case 'T': { // Turtle group
+        case 'T': {
             float w = (float)textures[LOG2]->getFrameWidth();
             float h = (float)textures[LOG2]->getFrameHeight();
             int n, sink;
 
-            ss >> x >> y >> vx >> n >> sink;
+            if (!(ss >> x >> y >> vx >> n >> sink))
+                throw FileFormatError(path, lineNum, "Invalid TurtleGroup line");
 
             addObject(
                 new TurtleGroup(this, textures[LOG2],
@@ -149,10 +167,11 @@ void Game::loadMap(const char* path)
         }
 
         default:
-            break;
+            throw FileFormatError(path, lineNum, std::string("Unknown id: ") + id);
         }
     }
 }
+
 
 void Game::handleEvents()
 {
@@ -163,7 +182,7 @@ void Game::handleEvents()
             exit = true;
 
         // Reiniciar con tecla R
-        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_r) {
+        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_R) {
             reset();
             return;
         }
@@ -197,6 +216,8 @@ Collision Game::checkCollision(const SDL_FRect& box) const
 {
     for (auto* o : objects)
     {
+        if (o == frog) continue;              // <<< evitar auto-colisión
+
         Collision c = o->checkCollision(box);
         if (c.type == Collision::Type::ENEMY ||
             c.type == Collision::Type::HOME)
@@ -209,12 +230,15 @@ Collision Game::checkPlatform(const SDL_FRect& box) const
 {
     for (auto* o : objects)
     {
+        if (o == frog) continue;              // <<< igual aquí
+
         Collision c = o->checkCollision(box);
         if (c.type == Collision::Type::PLATFORM)
             return c;
     }
     return {};
 }
+
 
 void Game::flushDeletions()
 {

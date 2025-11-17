@@ -28,7 +28,7 @@ public:
     static constexpr int WINDOW_HEIGHT = 484;
     static constexpr int RIVER_LOW = 210;
 
-    enum TextureName { FROG_TEX = 0, BACKGROUND, CAR1, CAR2, CAR3, CAR4, CAR5, LOG1, LOG2, WASP, NUM_TEXTURES };
+    enum TextureName { FROG = 0, BACKGROUND, CAR1, CAR2, CAR3, CAR4, CAR5, LOG1, LOG2, WASP, NUM_TEXTURES };
 
     using Anchor = std::list<SceneObject*>::iterator;
 

@@ -1,8 +1,8 @@
 #include "texture.h"
+#include "Errors.h"          // <--- NUEVO
 
 #include <SDL3_image/SDL_image.h>
 #include <string>
-
 using namespace std;
 
 SDL_Texture* tryLoadTexture(SDL_Renderer* renderer, const char* filename)
@@ -10,12 +10,14 @@ SDL_Texture* tryLoadTexture(SDL_Renderer* renderer, const char* filename)
 	SDL_Texture* texture = IMG_LoadTexture(renderer, filename);
 
 	if (texture == nullptr)
-		throw "load image texture: "s + filename;
+		// Fichero de imagen no encontrado / inválido
+		throw FileNotFoundError(std::string(filename));
 
 	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
 
 	return texture;
 }
+
 
 Texture::Texture(SDL_Renderer* renderer, SDL_Texture* texture, int rows, int columns)
   : renderer(renderer)
