@@ -1,35 +1,20 @@
 ﻿#pragma once
 #include "Crosser.h"
 
-// Declaración adelantada, solo usamos Game*
+// Declaración adelantada
 class Game;
 
 class Vehicle : public Crosser {
 public:
-    // Constructor: g, tex, x, y, vx, leftSpan, rightSpan
+    // Constructor: g, tex, pos, vx, leftSpan, rightSpan
     Vehicle(Game* g, Texture* tex,
         Point2D pos,
         float vx,
-        float leftSpan, float rightSpan)
-        : Crosser(g, tex,
-            pos,
-            (float)tex->getFrameWidth(),
-            (float)tex->getFrameHeight(),
-            Vector2D<>{vx, 0.0f},
-            leftSpan, rightSpan)
-    {
-    }
+        float leftSpan, float rightSpan);
 
-    ~Vehicle() override = default;
+    ~Vehicle() override;
 
-    void render() const override {
-        SceneObject::render();
-    }
-
-    Collision checkCollision(const SDL_FRect& other) const override {
-        SDL_FRect me = getRect();
-        if (SDL_HasRectIntersectionFloat(&me, &other))
-            return { Collision::Type::ENEMY, {} };
-        return {};
-    }
+    void render() const override;
+    Collision checkCollision(const SDL_FRect& other) const override;
 };
+

@@ -19,5 +19,6 @@ public:
         SDL_FRect me = getRect();
         if (SDL_HasRectIntersectionFloat(&me, &other))
             return { Collision::Type::PLATFORM, vel };
+        return{};
     }
 };
