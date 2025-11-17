@@ -11,6 +11,4 @@ public:
         float left, float right);
 
     ~Platform() override;
-
-    Collision checkCollision(const SDL_FRect& other) const override;
 };

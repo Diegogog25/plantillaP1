@@ -17,7 +17,7 @@ class Frog : public SceneObject {
 
 public:
     Frog(Game* g, Texture* t, float X, float Y)
-        : SceneObject(g, t, X, Y, (float)t->getFrameWidth(), (float)t->getFrameHeight()),
+        : SceneObject(g, t, pos, (float)t->getFrameWidth(), (float)t->getFrameHeight()),
         startX(X), startY(Y) {
     }
 
@@ -25,7 +25,7 @@ public:
     int  getLives() const { return lives; }
     void loseLife() { --lives; }
 
-    void reset() { x = startX; y = startY; moving = false; framesLeft = 0;jumpFrames = 0; stepX = stepY = 0; }
+    void reset() { pos.setX(startX) ; pos.setY(startY); moving = false; framesLeft = 0; jumpFrames = 0; stepX = stepY = 0; }
 
     void handleEvents(const SDL_Event& e);
     void update() override;

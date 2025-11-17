@@ -2,17 +2,19 @@
 #include "GameObject.h"
 #include "texture.h"
 #include "collision.h"
+#include "vector2D.h"
 #include <SDL3/SDL.h>
 
 class SceneObject : public GameObject {
 protected:
-    float x, y, w, h;
+	Point2D pos;
+    float w, h;
     Texture* tex;
 
     SDL_FRect bbox() const;
 
 public:
-    SceneObject(Game* g, Texture* t, float X, float Y, float W, float H);
+    SceneObject(Game* g, Texture* t, Point2D pos, float W, float H);
     virtual ~SceneObject();
 
     void update() override;

@@ -26,7 +26,7 @@ public:
     static constexpr int FRAME_RATE = 30;
     static constexpr int WINDOW_WIDTH = 448;
     static constexpr int WINDOW_HEIGHT = 484;
-    static constexpr int RIVER_LOW = 210;
+    static constexpr int RIVER_LOW = 180;
 
     enum TextureName { FROG = 0, BACKGROUND, CAR1, CAR2, CAR3, CAR4, CAR5, LOG1, LOG2, WASP, NUM_TEXTURES };
 

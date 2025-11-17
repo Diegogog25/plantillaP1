@@ -12,7 +12,7 @@ public:
         float vx,
         float leftSpan, float rightSpan)
         : Crosser(g, tex,
-            x, y,
+            pos,
             (float)tex->getFrameWidth(),
             (float)tex->getFrameHeight(),
             Vector2D<>{vx, 0.0f},

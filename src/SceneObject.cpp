@@ -1,23 +1,24 @@
 #include "SceneObject.h"
 
-
 SceneObject::SceneObject(Game* g, Texture* t,
-    float X, float Y,
+    Point2D pos,
     float W, float H)
-    : GameObject(g), x(X), y(Y), w(W), h(H), tex(t)
+    : GameObject(g), pos(pos), w(W), h(H), tex(t)
 {}
 
 SceneObject::~SceneObject() = default;
 
 SDL_FRect SceneObject::bbox() const {
-    return SDL_FRect{ x, y, w, h };
+    return SDL_FRect{ pos.getX(), pos.getY(), w, h };
 }
 
 void SceneObject::update() {}
 
 void SceneObject::render() const {
-    if (tex)
-        tex->render(SDL_FRect{ x, y, w, h });
+    if (tex) {
+        SDL_FRect r{ pos.getX(), pos.getY(), w, h };
+        tex->render(r);
+    }
 }
 
 SDL_FRect SceneObject::getRect() const {

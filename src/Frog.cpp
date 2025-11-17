@@ -26,22 +26,18 @@ void Frog::update() {
         if (c.type == Collision::Type::HOME) { reset(); return; } // Game marcará nido ocupado
         return;
     }
-
-    switch (c.type) {
-    case Collision::Type::ENEMY: loseLife(); reset(); return;
-    case Collision::Type::HOME:  reset(); return;
-    default: break;
-    }
-
-    // 2ª pasada: PLATFORM (arrastre)
-    Collision p = game->checkPlatform(box);
-    if (p.type == Collision::Type::PLATFORM) {
-        x += p.platformVel.getX();
-        if (x < 0 || x + w > Game::WINDOW_WIDTH) { loseLife(); reset(); return; }
-    }
     else {
-        // agua
-        if (y < Game::RIVER_LOW) { loseLife(); reset(); return; }
+        if (c.type == Collision::Type::ENEMY) { loseLife(); reset(); return; }
+        else if (c.type == Collision::Type::HOME) { reset(); return; } // Game marcará nido ocupado
+        else if (c.type == Collision::Type::PLATFORM) {
+             x += c.platformVel.getX();
+             std::cout << "plataforma";
+             if (x < 0 || x + w > Game::WINDOW_WIDTH) { loseLife(); reset(); return; }
+        }
+        else if (c.type == Collision::Type::NONE) {
+            // agua
+            if (y < Game::RIVER_LOW) { loseLife(); reset(); return; }
+        }
     }
 }
 

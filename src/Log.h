@@ -7,7 +7,7 @@ class Log : public Platform {
 public:
     // Constructor
     Log(Game* g, Texture* tex,
-        float x, float y,
+        Point2D pos,
         float vx,
         float leftSpan, float rightSpan);
 
