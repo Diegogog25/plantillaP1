@@ -25,7 +25,7 @@ public:
     int  getLives() const { return lives; }
     void loseLife() { --lives; }
 
-    void reset() { x = startX; y = startY; moving = false; framesLeft = 0; stepX = stepY = 0; }
+    void reset() { x = startX; y = startY; moving = false; framesLeft = 0;jumpFrames = 0; stepX = stepY = 0; }
 
     void handleEvents(const SDL_Event& e);
     void update() override;

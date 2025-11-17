@@ -14,26 +14,11 @@ public:
         float X, float Y,
         float W, float H,
         Vector2D<> v,
-        float left, float right)
-        : SceneObject(g, tex, X, Y, W, H),
-        vel(v),
-        leftLimit(left),
-        rightLimit(right)
-    {
-    }
+        float left, float right);
 
     ~Crosser() override = default;
 
-    void update() override
-    {
-        x += vel.getX();
-        y += vel.getY();
+    void update() override ;
 
-        if (vel.getX() > 0 && x > rightLimit)
-            x = leftLimit;
-        else if (vel.getX() < 0 && x + w < leftLimit)
-            x = rightLimit;
-    }
-
-    const Vector2D<>& getVel() const { return vel; }
+    const Vector2D<>& getVel() const;
 };

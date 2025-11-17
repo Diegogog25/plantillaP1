@@ -1,8 +1,10 @@
 #pragma once
-#include "Platform.h"
 
-// Declaración adelantada opcional
-class Game;
+#include "Platform.h"     
+#include <SDL3/SDL_rect.h> 
+
+class Game;     
+class Texture;  
 
 class TurtleGroup : public Platform {
 private:
@@ -13,48 +15,17 @@ private:
     bool sunk = false;
 
 public:
-    // Constructor: g, tex, x, y, w, h, vx, leftSpan, rightSpan, n, sink
     TurtleGroup(Game* g, Texture* tex,
         float x, float y,
         float w, float h,
         float vx,
         float leftSpan, float rightSpan,
-        int n, bool sink)
-        : Platform(g, tex, x, y, w, h,
-            Vector2D<>{vx, 0.0f},
-            leftSpan, rightSpan),
-        numTurtles(n),
-        submerging(sink)
-    {
-    }
+        int n, bool sink);
 
     ~TurtleGroup() override = default;
 
-    void update() override {
-        Platform::update();
-        if (submerging) {
-            timer = (timer + 1) % period;
-            sunk = (timer > (period * 2) / 3);
-        }
-    }
+    void update() override;
+    void render() const override;
 
-    void render() const override {
-        if (submerging && sunk) return;
-
-        for (int i = 0; i < numTurtles; ++i) {
-            SDL_FRect dst{ x + i * w, y, w, h };
-            tex->renderFrame(dst, 0, 0);
-        }
-    }
-
-    Collision checkCollision(const SDL_FRect& other) const override {
-        if (submerging && sunk) return {};
-
-        for (int i = 0; i < numTurtles; ++i) {
-            SDL_FRect me{ x + i * w, y, w, h };
-            if (SDL_HasRectIntersectionFloat(&me, &other))
-                return { Collision::Type::PLATFORM, vel };
-        }
-        return {};
-    }
+    Collision checkCollision(const SDL_FRect& other) const override;
 };

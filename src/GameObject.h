@@ -1,10 +1,15 @@
 #pragma once
-class Game;   // declaración adelantada
 
-struct GameObject {
+class Game;   // Declaración adelantada
+
+class GameObject {
+protected:
     Game* game;
-    explicit GameObject(Game* g) : game(g) {}
-    virtual ~GameObject() = default;
+
+public:
+    explicit GameObject(Game* g);
+
+    virtual ~GameObject();
 
     virtual void render() const = 0;
     virtual void update() = 0;

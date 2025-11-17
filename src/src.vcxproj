@@ -94,13 +94,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Crosser.cpp" />
     <ClCompile Include="Frog.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HomedFrog.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Platform.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="texture.cpp" />
+    <ClCompile Include="TurtleGroup.cpp" />
     <ClCompile Include="Vehicle.cpp" />
     <ClCompile Include="Wasp.cpp" />
   </ItemGroup>

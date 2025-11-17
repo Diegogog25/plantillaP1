@@ -6,34 +6,19 @@
 
 class SceneObject : public GameObject {
 protected:
-    float x{}, y{}, w{}, h{};
-    Texture* tex{};
+    float x, y, w, h;
+    Texture* tex;
 
-    SDL_FRect bbox() const { return SDL_FRect{ x, y, w, h }; }
+    SDL_FRect bbox() const;
 
 public:
-    SceneObject(Game* g, Texture* t, float X, float Y, float W, float H)
-        : GameObject(g), x(X), y(Y), w(W), h(H), tex(t) {
-    }
+    SceneObject(Game* g, Texture* t, float X, float Y, float W, float H);
+    virtual ~SceneObject();
 
-    virtual ~SceneObject() = default;
+    void update() override;
+    void render() const override;
 
-    // Ya NO es abstracta: update vacío
-    void update() override {}
+    SDL_FRect getRect() const;
 
-    void render() const override {
-        if (tex)
-            tex->render(SDL_FRect{ x, y, w, h });
-    }
-
-    // Getter público para el AABB (para usar desde Game)
-    SDL_FRect getRect() const { return bbox(); }
-
-    // Por defecto, colisión ENEMY si se solapan
-    virtual Collision checkCollision(const SDL_FRect& other) const {
-        SDL_FRect me = bbox();
-        if (SDL_HasRectIntersectionFloat(&me, &other))
-            return { Collision::Type::ENEMY, {} };
-        return {};
-    }
+    virtual Collision checkCollision(const SDL_FRect& other) const;
 };
