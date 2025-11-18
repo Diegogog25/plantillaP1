@@ -21,6 +21,8 @@ public:
     void update() override;
     void render() const override;
 
+    virtual Collision checkCollision(const SDL_FRect& other);
 
-    virtual Collision checkCollision(const SDL_FRect& other) ;
+    virtual bool isHome() const { return false; }
+    virtual bool isHomeOccupied() const { return false; }
 };

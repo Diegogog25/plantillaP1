@@ -14,6 +14,9 @@ public:
     void setOccupied(bool v);
     bool isOccupied() const;
 
+    bool isHome() const override { return true; }
+    bool isHomeOccupied() const override { return isOccupied(); }
+
     void render() const override;
     Collision checkCollision(const SDL_FRect& rect)  override;
 };

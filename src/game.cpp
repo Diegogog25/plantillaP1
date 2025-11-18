@@ -182,12 +182,22 @@ void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo dema
 
 void Game::update() // actualización de todos los objetos
 {
-	SpawnWasps();
+    SpawnWasps();
 
     for (auto it = objects.begin(); it != objects.end(); ++it)
         (*it)->update();
 
     flushDeletions();
+
+    // Comprobar victoria: 5 nidos ocupados => fin de partida
+    int occupied = 0;
+    for (SceneObject* o : objects) {
+        if (o->isHome() && o->isHomeOccupied()) ++occupied;
+    }
+    homedfrogs = occupied;
+    if (homedfrogs >= 5) {
+        exit = true; // saldrá del bucle en run()
+    }
 }
 
 void Game::render() const // renderizado de todos los objetos
@@ -248,12 +258,12 @@ void Game::SpawnWasps() // función de spawn de avispas
         waspTimer = 0;
         nextWaspTime = getRandomRange(minTime, maxSpawn);
 
-		// busca y agrupa nidos libres
-        std::vector<HomedFrog*> freeHomes;
+		// busca y agrupa nidos libres (sin dynamic_cast)
+        std::vector<SceneObject*> freeHomes;
         freeHomes.reserve(5);
         for (SceneObject* o : objects) {
-            if (auto* hf = dynamic_cast<HomedFrog*>(o)) {
-                if (!hf->isOccupied()) freeHomes.push_back(hf);
+            if (o->isHome() && !o->isHomeOccupied()) {
+                freeHomes.push_back(o);
             }
         }
 
@@ -261,7 +271,7 @@ void Game::SpawnWasps() // función de spawn de avispas
         if (freeHomes.empty()) return;
 
         // Elige un nido libre aleatorio
-        HomedFrog* target = freeHomes[getRandomRange(0, (int)freeHomes.size() - 1)];
+        SceneObject* target = freeHomes[getRandomRange(0, (int)freeHomes.size() - 1)];
 
         const int waspW = textures[WASP]->getFrameWidth();
         const int waspH = textures[WASP]->getFrameHeight();
