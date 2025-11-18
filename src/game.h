@@ -49,7 +49,7 @@ private:
     bool homedSpawned = false; // evita duplicar nidos
 
     // spawn de avispas
-    static constexpr int minTime = 200, maxTime = 1000, maxSpawn = 1200;
+    static constexpr int minTime = 75, maxTime = 200, maxSpawn = 1200;
     int waspTimer = 0;
     int nextWaspTime = 0; // NUEVO: siguiente instante de spawn
 public:
