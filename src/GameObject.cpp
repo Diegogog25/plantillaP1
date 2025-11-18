@@ -1,10 +1,10 @@
-#include "GameObject.h"
+ï»¿#include "GameObject.h"
 
 
 GameObject::GameObject(Game* _game) { game = _game; } // constructor
 
 GameObject::~GameObject() {} // destructor
 
-void GameObject::update() {} // actualización vacía por defecto
+void GameObject::update() {} // actualizaciÃ³n vacÃ­a por defecto
 
-void GameObject::render() const {} // renderizado vacío por defecto
+void GameObject::render() const {} // renderizado vacÃ­o por defecto

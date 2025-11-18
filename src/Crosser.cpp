@@ -1,4 +1,4 @@
-#include "Crosser.h"
+ï»¿#include "Crosser.h"
 #include "game.h"
 #include "Texture.h"
 
@@ -16,7 +16,7 @@ Crosser::Crosser(Game* g, Texture* tex, //constructor
 
 Crosser::~Crosser() {} // destructor
 
-void Crosser::update() // actualización de posición y límites
+void Crosser::update() // actualizaciÃ³n de posiciÃ³n y lÃ­mites
 {
     pos += vel;
 

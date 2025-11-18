@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "game.h"        // <-- para usar Game::Anchor
 #include "SceneObject.h"
 #include <SDL3/SDL.h>
@@ -9,7 +9,7 @@
 class Wasp : public SceneObject {
 private:
     unsigned long long expireAtMs = 0;
-	Game::Anchor anchor;   // alias para el iterador del objeto en la lista polim�rfica del juego
+	Game::Anchor anchor;   // alias para el iterador del objeto en la lista polimórfica del juego
 
 public:
     Wasp(Game* g, Texture* t, const Point2D& pos, Uint32 lifetimeMs);

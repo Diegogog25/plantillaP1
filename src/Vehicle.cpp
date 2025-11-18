@@ -1,4 +1,4 @@
-#include "Vehicle.h"
+﻿#include "Vehicle.h"
 #include "game.h"
 #include "Errors.h"
 #include <istream>
@@ -17,7 +17,7 @@ Vehicle::Vehicle(Game* g, Texture* tex, // constructor
 
 Vehicle::~Vehicle() = default; // destructor
 
-SceneObject* Vehicle::FromMap(Game* g, std::istream& ss, const char* path, int lineNum) // lectura desde mapa de veh�culos
+SceneObject* Vehicle::FromMap(Game* g, std::istream& ss, const char* path, int lineNum) // lectura desde mapa de vehículos
 {
     float x, y, vx; int type;
     if (!(ss >> x >> y >> vx >> type))

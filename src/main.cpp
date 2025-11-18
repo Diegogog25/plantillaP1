@@ -1,4 +1,4 @@
-#include "game.h"
+Ôªø#include "game.h"
 #include "Errors.h"
 #include <string>
 
@@ -6,11 +6,11 @@ int main(int, char**) {
     try {
         Game().run();
     }
-	catch (const GameError& e) { // errores especÌficos del juego
+	catch (const GameError& e) { // errores espec√≠ficos del juego
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Game Error", e.what(), nullptr);
         return 1;
     }
-	catch (const std::exception& e) { // otros errores est·ndar
+	catch (const std::exception& e) { // otros errores est√°ndar
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", e.what(), nullptr);
         return 1;
     }

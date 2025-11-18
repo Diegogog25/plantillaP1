@@ -1,11 +1,11 @@
-#include "Wasp.h"
+ï»¿#include "Wasp.h"
 #include "game.h"
 #include <SDL3/SDL_timer.h>
 
 Wasp::Wasp(Game* g, Texture* t, const Point2D& pos, Uint32 lifetimeMs) // constructor
     : SceneObject(g, t, pos, (float)t->getFrameWidth(), (float)t->getFrameHeight())
 {
-	expireAtMs = (unsigned long long)(SDL_GetTicksNS() / 1000000ULL) + lifetimeMs; // tiempo de expiración
+	expireAtMs = (unsigned long long)(SDL_GetTicksNS() / 1000000ULL) + lifetimeMs; // tiempo de expiraciÃ³n
 }
 
 void Wasp::render() const { // renderizado
@@ -17,8 +17,8 @@ void Wasp::deleteWasp() { // marca la avispa para borrado
     game->deleteAfter(anchor);
 }
 
-void Wasp::update() { // actualización
-    // Auto-eliminación cuando muera
+void Wasp::update() { // actualizaciÃ³n
+    // Auto-eliminaciÃ³n cuando muera
     if (!isAlive()) {
         deleteWasp();
         return;

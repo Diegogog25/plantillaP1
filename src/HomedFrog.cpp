@@ -1,4 +1,4 @@
-#include "HomedFrog.h"
+Ôªø#include "HomedFrog.h"
 #include "game.h"
 
 
@@ -11,13 +11,13 @@ HomedFrog::HomedFrog(Game* g, Texture* t, Point2D pos) // constructor
 
 HomedFrog::~HomedFrog() = default; // destructor
 
-void HomedFrog::update() {} // actualizaciÛn (vacÌa)
+void HomedFrog::update() {} // actualizaci√≥n (vac√≠a)
 
 void HomedFrog::setOccupied(bool v) { // marcar como ocupado o libre
     inHouse = v;
 }
 
-bool HomedFrog::isOccupied() const { // consultar si est· ocupado
+bool HomedFrog::isOccupied() const { // consultar si est√° ocupado
     return inHouse;
 }
 
@@ -29,8 +29,8 @@ void HomedFrog::render() const { // renderizado
     }
 }
 
-Collision HomedFrog::checkCollision(const SDL_FRect& rect) { // colisiones, cambia seg˙n si est· ocupado o no
-    // Banda superior de la casa: reduce la altura de colisiÛn
+Collision HomedFrog::checkCollision(const SDL_FRect& rect) { // colisiones, cambia seg√∫n si est√° ocupado o no
+    // Banda superior de la casa: reduce la altura de colisi√≥n
     constexpr float HOME_BAND = 0.30f; // 30% superior
     const float bandH = std::max(1.f, h * HOME_BAND);
     SDL_FRect me{ pos.getX(), pos.getY(), w, bandH };

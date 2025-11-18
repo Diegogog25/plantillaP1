@@ -1,4 +1,4 @@
-#include "SceneObject.h"
+ï»¿#include "SceneObject.h"
 
 SceneObject::SceneObject(Game* g, Texture* t, // constructor
     Point2D pos,
@@ -8,11 +8,11 @@ SceneObject::SceneObject(Game* g, Texture* t, // constructor
 
 SceneObject::~SceneObject() = default; // destructor
 
-SDL_FRect SceneObject::getBoundingBox() const { // getter de la caja de colisión
+SDL_FRect SceneObject::getBoundingBox() const { // getter de la caja de colisiÃ³n
     return SDL_FRect{ pos.getX(), pos.getY(), w, h };
 }
 
-void SceneObject::update() {} // actualización (vacía)
+void SceneObject::update() {} // actualizaciÃ³n (vacÃ­a)
 
 void SceneObject::render() const { // renderizado
     if (tex) {

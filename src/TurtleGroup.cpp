@@ -1,4 +1,4 @@
-#include "TurtleGroup.h"
+ï»¿#include "TurtleGroup.h"
 #include "game.h"
 #include "Errors.h"
 #include <istream>
@@ -35,7 +35,7 @@ SceneObject* TurtleGroup::FromMap(Game* g, std::istream& ss, const char* path, i
         leftSpan, rightSpan, n, sink != 0);
 }
 
-static int AnimacionTortugas(int t, int period, bool submerging, bool& visible, bool& solid) // animación de las tortugas por fases, le devuelve el frame actual al render
+static int AnimacionTortugas(int t, int period, bool submerging, bool& visible, bool& solid) // animaciÃ³n de las tortugas por fases, le devuelve el frame actual al render
 {
     constexpr int SWIM_FRAMES = 3;
     constexpr int DIVE_FRAMES = 4;
@@ -86,7 +86,7 @@ static int AnimacionTortugas(int t, int period, bool submerging, bool& visible, 
     return 0;
 }
 
-void TurtleGroup::update() { // actualización de la posición y animación
+void TurtleGroup::update() { // actualizaciÃ³n de la posiciÃ³n y animaciÃ³n
     Platform::update();
     timer = (timer + 1) % period;
 
@@ -108,7 +108,7 @@ void TurtleGroup::render() const { // renderizado del frame actual
     }
 }
 
-Collision TurtleGroup::checkCollision(const SDL_FRect& other) { // colisiones según el frame actual, cuando se hunden no colisionan
+Collision TurtleGroup::checkCollision(const SDL_FRect& other) { // colisiones segÃºn el frame actual, cuando se hunden no colisionan
     bool visible, solid;
     int animTime = timer;
     (void)AnimacionTortugas(animTime, period, submerging, visible, solid);
