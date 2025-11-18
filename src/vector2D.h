@@ -39,7 +39,6 @@ public:
 
     // Utilidades
     T sqrMagnitude() const { return x * x + y * y; }
-    auto magnitude() const { return std::sqrt(static_cast<long double>(sqrMagnitude())); }
 
     // E/S
     friend std::ostream& operator<<(std::ostream& out, const Vector2D& v) {

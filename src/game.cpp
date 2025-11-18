@@ -106,12 +106,9 @@ void Game::loadMap(const char* path) // carga mapa desde archivo
     while (getline(file, line))
     {
         ++lineNum;
-
         if (line.empty() || line[0] == '#') continue;
-
         stringstream ss(line);
         char id; ss >> id;
-
         switch (id)
         {
         case 'F': {
@@ -149,22 +146,13 @@ void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo dema
         if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_0)
         {
             int buttonId = -1;
-
             const SDL_MessageBoxButtonData buttons[] = {
                 { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "Cancelar" },
                 { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Reiniciar" }
             };
-
             const SDL_MessageBoxData msgData = {
-                SDL_MESSAGEBOX_WARNING,            
-                window,                            
-                "Reiniciar partida",                
-                "¿Seguro que quieres reiniciar la partida?", 
-                SDL_arraysize(buttons),
-                buttons,
-                nullptr                              
+                SDL_MESSAGEBOX_WARNING, window, "Reiniciar partida", "¿Seguro que quieres reiniciar la partida?", SDL_arraysize(buttons), buttons, nullptr                              
             };
-
             if (SDL_ShowMessageBox(&msgData, &buttonId))
             {
                 if (buttonId == 1)
@@ -174,7 +162,6 @@ void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo dema
                 }
             }
         }
-
         if (frog)
             frog->handleEvents(e);
     }

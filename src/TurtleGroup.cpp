@@ -40,49 +40,38 @@ static int AnimacionTortugas(int t, int period, bool submerging, bool& visible, 
 {
     constexpr int SWIM_FRAMES = 3;
     constexpr int DIVE_FRAMES = 4;
-
     if (!submerging) {
         visible = true;
         solid = true;
-        int slice = std::max(1, period / SWIM_FRAMES);
-        int step = (t / slice) % SWIM_FRAMES;
+        int step = (t / (std::max(1, period / SWIM_FRAMES))) % SWIM_FRAMES;
         return step;
     }
-
     const int swimSpan = period * 50 / 100;
     const int diveDownSpan = period * 10 / 100;
     const int hideSpan = period * 30 / 100;
     const int diveUpSpan = period * 10 / 100;
-
     if (t < swimSpan) {
         visible = true; solid = true;
-        int step = (t * SWIM_FRAMES) / std::max(1, swimSpan);
-        return std::min(SWIM_FRAMES - 1, step);
+        return std::min(SWIM_FRAMES - 1, (t * SWIM_FRAMES) / std::max(1, swimSpan));
     }
     t -= swimSpan;
-
     if (t < diveDownSpan) {
         visible = true;
         solid = t < (diveDownSpan * 2) / 3;
-        int step = (t * DIVE_FRAMES) / std::max(1, diveDownSpan);
-        return 3 + std::min(DIVE_FRAMES - 1, step);
+        return 3 + std::min(DIVE_FRAMES - 1, (t * DIVE_FRAMES) / std::max(1, diveDownSpan));
     }
     t -= diveDownSpan;
-
     if (t < hideSpan) {
         visible = false; solid = false;
         return 6;
     }
     t -= hideSpan;
-
     if (t < diveUpSpan) {
         visible = true;
         solid = t > (diveUpSpan * 1) / 3;
-        int step = (t * DIVE_FRAMES) / std::max(1, diveUpSpan);
-        int frame = 6 - std::min(DIVE_FRAMES - 1, step);
+        int frame = 6 - std::min(DIVE_FRAMES - 1, (t * DIVE_FRAMES) / std::max(1, diveUpSpan));
         return frame;
     }
-
     visible = true; solid = true;
     return 0;
 }
@@ -91,9 +80,9 @@ void TurtleGroup::update() { // actualización de la posición y animación
     Platform::update();
     timer = (timer + 1) % period;
 
-    bool vis, solid;
+    bool visible, solid;
     int animTime = timer;
-    (void)AnimacionTortugas(animTime, period, submerging, vis, solid);
+    (void)AnimacionTortugas(animTime, period, submerging, visible, solid);
     sunk = !solid;
 }
 

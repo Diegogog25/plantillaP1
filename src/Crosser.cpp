@@ -1,6 +1,6 @@
 ﻿#include "Crosser.h"
 #include "game.h"
-#include "Texture.h"
+#include "texture.h"
 
 Crosser::Crosser(Game* g, Texture* tex, //constructor
     Point2D pos,
