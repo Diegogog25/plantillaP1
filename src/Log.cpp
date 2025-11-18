@@ -2,6 +2,7 @@
 #include "game.h"
 #include "Errors.h"
 #include <istream>
+#include <algorithm> 
 
 Log::Log(Game* g, Texture* tex, // constructor
     Point2D pos,
@@ -40,14 +41,19 @@ void Log::update() { // actualización de posición y límites
     else if (vel.getX() < 0 && pos.getX() + w < leftLimit)
         pos.setX(rightLimit);
 }
-Collision Log::checkCollision(const SDL_FRect& other) { // colisiones con la rana, le aplica su velocidad
 
-    SDL_FRect me{ pos.getX() , pos.getY(), w, h };
+Collision Log::checkCollision(const SDL_FRect& other) // colisiones con reducción de la caja de colisión
+{
+    constexpr float PAD_LEFT  = 12.f;
+    constexpr float PAD_RIGHT = 12.f;
+
+    const float rw = std::max(1.0f, w - (PAD_LEFT + PAD_RIGHT));
+    SDL_FRect me{ pos.getX() + PAD_LEFT, pos.getY(), rw, h };
 
     if (SDL_HasRectIntersectionFloat(&me, &other))
-            return { Collision::Type::PLATFORM, vel };
+        return { Collision::Type::PLATFORM, vel };
     return {};
 }
 
-Log::~Log() = default; // destructor
+Log::~Log() = default;
 

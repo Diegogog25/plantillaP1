@@ -4,8 +4,9 @@
 #include <cmath>
 #include <istream>
 #include <sstream>
+#include <algorithm> // std::max
 
-Frog* Frog::FromMap(Game* g, std::istream& ss, const char* path, int lineNum) // lectura desde mapa de frog
+Frog* Frog::FromMap(Game* g, std::istream& ss, const char* path, int lineNum) // lectura desde mapa de la rana
 {
     float x, y;
     if (!(ss >> x >> y))
@@ -28,13 +29,22 @@ void Frog::update() { // actualización de posición, colisiones y animación
         if (jumpFrames > 0) --jumpFrames;
     }
 
-    SDL_FRect box{ pos.getX(), pos.getY() + 8.0f, w, std::max(1.f, h - 16.f)};
+    // Caja de colisión reducida (vertical ya estaba; añadimos padding horizontal)
+    constexpr float PAD_X = 4.f;      // margen lateral rana
+    constexpr float PAD_Y_TOP = 8.f;  // ya existía
+    constexpr float PAD_Y_BOTTOM = 8.f;
+    SDL_FRect box{
+        pos.getX() + PAD_X,
+        pos.getY() + PAD_Y_TOP,
+        std::max(1.f, w - 2.f * PAD_X),
+        std::max(1.f, h - (PAD_Y_TOP + PAD_Y_BOTTOM))
+    };
 
-    // 1ª pasada: ENEMY/HOME
     Collision c = game->checkCollision(box);
+
     if (moving) {
         if (c.type == Collision::Type::ENEMY) { loseLife(); reset(); return; }
-        if (c.type == Collision::Type::HOME) { reset(); return; } // Game marcará nido ocupado
+        if (c.type == Collision::Type::HOME)  { reset(); return; }
         return;
     }
     else {

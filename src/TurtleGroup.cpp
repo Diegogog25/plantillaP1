@@ -2,6 +2,7 @@
 #include "game.h"
 #include "Errors.h"
 #include <istream>
+#include <algorithm>
 
 TurtleGroup::TurtleGroup(Game* g, Texture* tex, // constructor
     Point2D pos,
@@ -114,8 +115,12 @@ Collision TurtleGroup::checkCollision(const SDL_FRect& other) { // colisiones se
     (void)AnimacionTortugas(animTime, period, submerging, visible, solid);
     if (!solid) return {};
 
+    // Reducimos la caja de cada tortuga
+    constexpr float PAD_X = 4.f;
+    const float rw = std::max(1.0f, w - 2.0f * PAD_X);
+
     for (int i = 0; i < numTurtles; ++i) {
-        SDL_FRect me{ pos.getX() + i * w, pos.getY(), w, h };
+        SDL_FRect me{ pos.getX() + i * w + PAD_X, pos.getY(), rw, h };
         if (SDL_HasRectIntersectionFloat(&me, &other))
             return { Collision::Type::PLATFORM, vel };
     }
