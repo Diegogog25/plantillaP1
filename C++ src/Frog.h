@@ -1,49 +1,36 @@
 #pragma once
-#include "vector2D.h"
-#include "texture.h"
-#include "SDL3/SDL.h"
+#include "SceneObject.h"
+#include <iosfwd> // std::istream
 
-class Game;
-
-class Frog
-{
-    Texture* texture = nullptr;
-    Point2D pos;
-    Point2D startPos; // posición inicial para reset al morir
-    Game* game = nullptr;
-
-    // Dirección solicitada (solo se usa para iniciar un movimiento)
-    Vector2D<> dir{ 0,0 };
-    float speed = 32.f; // distancia por paso (una "casilla")
-
-    int lives = 3;
-
-    // Orientación y animación
+class Frog : public SceneObject {
+    // animación y control
     float angle = 0.f;
     int   jumpFrames = 0;
-    static constexpr int JUMP_FRAMES = 6; // también duración del paso suave (6 frames = 200 ms a 30 fps)
+    static constexpr int JUMP_FRAMES = 6;
+    bool  moving = false;
+    int   framesLeft = 0;
+    Vector2D<> step = { 0, 0 };
 
-    // Movimiento suave por paso (no se puede recalcular hasta terminar)
-    bool moving = false;
-    int  moveFramesLeft = 0;
-    Vector2D<> stepPerFrame{0.f, 0.f};
-    Point2D moveEnd;
+    int   lives = 3;
+    float cell = 32.f;
+    float uiH = 36.f; // barra superior
+	Point2D startPos;
 
 public:
-    Frog(Texture* _texture, Point2D _pos, Game* _game);
-    ~Frog();
+    Frog(Game* g, Texture* t, Point2D pos)
+        : SceneObject(g, t, pos, (float)t->getFrameWidth(), (float)t->getFrameHeight()),
+        startPos(pos) {
+    }
 
-    void render() const;
-    void update();
-    void handleEvents(const SDL_Event& e);
+    static Frog* FromMap(Game* g, std::istream& ss, const char* path, int lineNum);
 
-    const Point2D& getPos() const { return pos; }
-    void setPos(Point2D p) { pos = p; }
-
-    int getLives() const { return lives; }
+    void setLives(int n) { lives = n; }
+    int  getLives() const { return lives; }
     void loseLife() { --lives; }
-    void setLives(int n) { lives = n; } // requerido por game.cpp
 
-    // Resetea la rana a la posición inicial
-    void resetToStart() { pos = startPos; dir = {0,0}; moving = false; moveFramesLeft = 0; stepPerFrame = {0,0}; }
+    void reset() { pos.setX(startPos.getX()); pos.setY(startPos.getY()); moving = false; framesLeft = 0; jumpFrames = 0; step.setX(0); step.setY(0); }
+
+    void handleEvents(const SDL_Event& e);
+    void update() override;
+    void render() const override;
 };

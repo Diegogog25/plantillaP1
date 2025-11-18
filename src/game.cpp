@@ -1,4 +1,5 @@
 #include "game.h"
+#include "Wasp.h"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -7,7 +8,7 @@
 using namespace std;
 
 constexpr const char* WINDOW_TITLE = "Frogger P2";
-constexpr const char* MAP_FILE = "../assets/maps/default.txt";
+constexpr const char* MAP_FILE = "../assets/maps/turtles.txt";
 constexpr const char* IMG_DIR = "../assets/images/";
 
 struct TexSpec { const char* name; int rows; int cols; };
@@ -26,7 +27,7 @@ constexpr array<TexSpec, Game::NUM_TEXTURES> texList{
     {"turtle.png",1,7}
 };
 
-Game::Game()
+Game::Game() // constructor
 {
     if (!SDL_Init(SDL_INIT_VIDEO))
         throw SDLError("SDL_Init");
@@ -41,36 +42,59 @@ Game::Game()
 
     for (size_t i = 0; i < textures.size(); ++i)
     {
-        auto [name, rows, cols] = ::texList[i];
-        string path = string(IMG_DIR) + name;
-        textures[i] = new Texture(renderer, path.c_str(), rows, cols);
+        const TexSpec& spec = ::texList[i];
+        string path = string(IMG_DIR) + spec.name;
+        textures[i] = new Texture(renderer, path.c_str(), spec.rows, spec.cols);
     }
 }
 
 
-Game::~Game()
+Game::~Game() // destructor
 {
-    for (auto* o : objects) delete o;
+    for (SceneObject* o : objects) delete o;
     objects.clear();
 
-    for (auto*& t : textures) { delete t; t = nullptr; }
+    for (Texture*& t : textures) { delete t; t = nullptr; }
 
     if (renderer) SDL_DestroyRenderer(renderer);
     if (window) SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
-void Game::reset()
+void Game::initHomedFrogs() // inicializa nidos de HomedFrog
 {
-    for (auto* o : objects) delete o;
+    if (homedSpawned) return;
+
+    homedfrogs = 0;
+
+    // Coloca las HomedFrog
+    for (int i = 0; i < 5; ++i) {
+        float x = float(firstH + i * spaceH);
+        float y = float(houseY);
+        addObject(new HomedFrog(this, textures[FROG], Point2D(x, y)));
+    }
+
+    homedSpawned = true;
+}
+
+void Game::reset() // reinicia partida
+{
+    for (SceneObject* o : objects) delete o;
     objects.clear();
     toDelete.clear();
     frog = nullptr;
 
+    homedSpawned = false;
+    initHomedFrogs();
+
+    // Inicializa temporizador de avispas
+    waspTimer = 0;
+    nextWaspTime = getRandomRange(minTime, maxTime);
+
     loadMap(MAP_FILE);
 }
 
-void Game::loadMap(const char* path)
+void Game::loadMap(const char* path) // carga mapa desde archivo
 {
     ifstream file(path);
     if (!file)
@@ -86,86 +110,27 @@ void Game::loadMap(const char* path)
         if (line.empty() || line[0] == '#') continue;
 
         stringstream ss(line);
-        char id;
-        ss >> id;
-
-        float x, y, vx;
-		Point2D pos;
-        int type = 1; // valor por defecto para logs
-
-        float leftSpan = -150.0f;
-        float rightSpan = WINDOW_WIDTH + 150.0f;
+        char id; ss >> id;
 
         switch (id)
         {
         case 'F': {
-            if (!(ss >> x >> y))
-                throw FileFormatError(path, lineNum, "Invalid Frog line");
-			pos.setX(x);
-			pos.setY(y);
-            frog = new Frog(this, textures[FROG], pos);
+            frog = Frog::FromMap(this, ss, path, lineNum);
             addObject(frog);
             break;
         }
-
         case 'V': {
-            if (!(ss >> x >> y >> vx >> type))
-                throw FileFormatError(path, lineNum, "Invalid Vehicle line");
-
-            Texture* t =
-                (type == 1) ? textures[CAR1] :
-                (type == 2) ? textures[CAR2] :
-                (type == 3) ? textures[CAR3] :
-                (type == 4) ? textures[CAR4] :
-                textures[CAR5];
-
-			pos.setX(x);
-			pos.setY(y);
-            addObject(
-                new Vehicle(this, t,
-                    pos,
-                    vx / FRAME_RATE,
-                    leftSpan, rightSpan)
-            );
+            addObject(Vehicle::FromMap(this, ss, path, lineNum));
             break;
         }
-
         case 'L': {
-            if (!(ss >> x >> y >> vx >> type ))   // SIN type en el mapa original
-                throw FileFormatError(path, lineNum, "Invalid Log line");
-
-            Texture* t = (type == 2) ? textures[LOG2] : textures[LOG1];
-            pos = Point2D(x, y);
-
-            addObject(
-                new Log(this, t,
-                    pos,
-                    vx / FRAME_RATE,
-                    leftSpan, rightSpan)
-            );
+            addObject(Log::FromMap(this, ss, path, lineNum));
             break;
         }
-
         case 'T': {
-            float w = (float)textures[TURTLE]->getFrameWidth();
-            float h = (float)textures[TURTLE]->getFrameHeight();
-            int n, sink;
-
-            if (!(ss >> x >> y >> vx >> n >> sink))
-                throw FileFormatError(path, lineNum, "Invalid TurtleGroup line");
-            
-            pos = Point2D(x, y);
-            addObject(
-                new TurtleGroup(this, textures[TURTLE],
-                    pos,
-                    w, h,
-                    vx / FRAME_RATE,
-                    leftSpan, rightSpan,
-                    n, sink != 0)
-            );
+            addObject(TurtleGroup::FromMap(this, ss, path, lineNum));
             break;
         }
-
         default:
             throw FileFormatError(path, lineNum, std::string("Unknown id: ") + id);
         }
@@ -173,7 +138,7 @@ void Game::loadMap(const char* path)
 }
 
 
-void Game::handleEvents()
+void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo demas lo gestiona frog)
 {
     SDL_Event e;
     while (SDL_PollEvent(&e))
@@ -201,32 +166,34 @@ void Game::handleEvents()
     }
 }
 
-void Game::update()
+void Game::update() // actualización de todos los objetos
 {
+	SpawnWasps();
+
     for (auto it = objects.begin(); it != objects.end(); ++it)
         (*it)->update();
 
     flushDeletions();
 }
 
-void Game::render() const
+void Game::render() const // renderizado de todos los objetos
 {
     SDL_RenderClear(renderer);
 
     textures[BACKGROUND]->render();
 
-    for (auto* o : objects)
+    for (SceneObject* o : objects)
         o->render();
 
     SDL_RenderPresent(renderer);
 }
 
-Collision Game::checkCollision(const SDL_FRect& box) const
+Collision Game::checkCollision(const SDL_FRect& box) const // colisiones de todos los objetos
 {
     Collision c;
-    for (auto* o : objects)
+    for (SceneObject* o : objects)
     {
-        if (o == frog) continue;              // <<< evitar auto-colisión
+        if (o == frog) continue;
 
         c = o->checkCollision(box);
         if (c.type != Collision::Type::NONE)
@@ -236,7 +203,7 @@ Collision Game::checkCollision(const SDL_FRect& box) const
 }
 
 
-void Game::flushDeletions()
+void Game::flushDeletions() // elimina objetos marcados para borrado (avispas caducadas)
 {
     for (auto it : toDelete)
     {
@@ -246,9 +213,9 @@ void Game::flushDeletions()
     toDelete.clear();
 }
 
-void Game::run()
+void Game::run() // bucle principal del juego
 {
-    reset();
+	reset();
 
     while (!exit && frog && frog->getLives() > 0)
     {
@@ -258,3 +225,41 @@ void Game::run()
         SDL_Delay(1000 / FRAME_RATE);
     }
 }
+
+void Game::SpawnWasps() // función de spawn de avispas
+{
+    // Spawn de avispas
+    waspTimer++;
+    if (waspTimer >= nextWaspTime) {
+        waspTimer = 0;
+        nextWaspTime = getRandomRange(minTime, maxSpawn);
+
+		// busca y agrupa nidos libres
+        std::vector<HomedFrog*> freeHomes;
+        freeHomes.reserve(5);
+        for (SceneObject* o : objects) {
+            if (auto* hf = dynamic_cast<HomedFrog*>(o)) {
+                if (!hf->isOccupied()) freeHomes.push_back(hf);
+            }
+        }
+
+        // Si no hay nidos libres, no spawneamos ahora
+        if (freeHomes.empty()) return;
+
+        // Elige un nido libre aleatorio
+        HomedFrog* target = freeHomes[getRandomRange(0, (int)freeHomes.size() - 1)];
+
+        const int waspW = textures[WASP]->getFrameWidth();
+        const int waspH = textures[WASP]->getFrameHeight();
+
+        SDL_FRect homeRect = target->getBoundingBox();
+        const float x = homeRect.x + (homeRect.w - waspW) * 0.5f;
+        const float y = homeRect.y + (homeRect.h - waspH) * 0.5f;
+
+        Wasp* w = new Wasp(this, textures[WASP], Point2D(x, y), 2500 );
+        Anchor an = addObject(w);
+        w->setAnchor(an);
+    }
+}
+
+

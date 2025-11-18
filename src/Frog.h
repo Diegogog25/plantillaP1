@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "SceneObject.h"
+#include <iosfwd>
 
 class Frog : public SceneObject {
     // animación y control
@@ -12,8 +13,8 @@ class Frog : public SceneObject {
 
     int   lives = 3;
     float cell = 32.f;
-    float uiH = 36.f; // barra superior
-	Point2D startPos;
+	float uiH = 36.f; // barra inferior
+    Point2D startPos;
 
 public:
     Frog(Game* g, Texture* t, Point2D pos)
@@ -21,11 +22,13 @@ public:
         startPos(pos) {
     }
 
-    void setLives(int n) { lives = n; }
-    int  getLives() const { return lives; }
-    void loseLife() { --lives; }
+    static Frog* FromMap(Game* g, std::istream& ss, const char* path, int lineNum);
 
-    void reset() { pos.setX(startPos.getX()); pos.setY(startPos.getY()); moving = false; framesLeft = 0; jumpFrames = 0; step.setX(0); step.setY(0); }
+	void setLives(int n) { lives = n; } // setter vidas
+	int  getLives() const { return lives; } // getter vidas
+	void loseLife() { --lives; } // pierde una vida
+
+	void reset() { pos.setX(startPos.getX()); pos.setY(startPos.getY()); moving = false; framesLeft = 0; jumpFrames = 0; step.setX(0); step.setY(0); } // resetea la posición y estado
 
     void handleEvents(const SDL_Event& e);
     void update() override;

@@ -1,10 +1,9 @@
 #pragma once
+#include "Platform.h"
+#include <iosfwd>
 
-#include "Platform.h"     
-#include <SDL3/SDL_rect.h> 
-
-class Game;     
-class Texture;  
+class Game;
+class Texture;
 
 class TurtleGroup : public Platform {
 private:
@@ -22,10 +21,11 @@ public:
         float leftSpan, float rightSpan,
         int n, bool sink);
 
+    static SceneObject* FromMap(Game* g, std::istream& ss, const char* path, int lineNum);
+
     ~TurtleGroup() override = default;
 
     void update() override;
     void render() const override;
-
     Collision checkCollision(const SDL_FRect& other) override;
 };

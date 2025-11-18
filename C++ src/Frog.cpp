@@ -1,33 +1,24 @@
 #include "Frog.h"
 #include "game.h"
-#include "collision.h"
-#include <SDL3/SDL.h>
-#include <algorithm>
+#include "Errors.h"
 #include <cmath>
+#include <istream>
+#include <sstream>
 
-Frog::Frog(Texture* _texture, Point2D _pos, Game* _game)
-    : texture(_texture), pos(_pos), startPos(_pos), game(_game) {}
-
-Frog::~Frog() {}
+Frog* Frog::FromMap(Game* g, std::istream& ss, const char* path, int lineNum)
+{
+    float x, y;
+    if (!(ss >> x >> y))
+        throw FileFormatError(path, lineNum, "Invalid Frog line");
+    return new Frog(g, g->getTexture(Game::FROG), Point2D(x, y));
+}
 
 void Frog::render() const {
-    SDL_FRect destRect{
-        pos.getX(),
-        pos.getY(),
-        (float)texture->getFrameWidth(),
-        (float)texture->getFrameHeight()
-    };
-
-    // 0 = quieta, 1 = salto/movimiento
+    SDL_FRect r{ pos.getX(), pos.getY(), w, h};
     const int col = (moving || jumpFrames > 0) ? 1 : 0;
-
-    // Centro RELATIVO al rect destino (SDL3)
-    SDL_FPoint center{ destRect.w * 0.5f, destRect.h * 0.5f };
-
-    float a = std::fmod(angle, 360.0f);
-    if (a < 0.0f) a += 360.0f;
-
-    texture->renderFrame(destRect, 0, col, a, &center, SDL_FLIP_NONE);
+    SDL_FPoint center{ r.w * 0.5f, r.h * 0.5f };
+    float a = std::fmod(angle, 360.0f); if (a < 0) a += 360.0f;
+    tex->renderFrame(r, 0, col, a, &center, SDL_FLIP_NONE);
 }
 
 void Frog::update() {

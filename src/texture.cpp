@@ -1,5 +1,5 @@
 #include "texture.h"
-#include "Errors.h"          // <--- NUEVO
+#include "Errors.h"
 
 #include <SDL3_image/SDL_image.h>
 #include <string>
@@ -10,7 +10,7 @@ SDL_Texture* tryLoadTexture(SDL_Renderer* renderer, const char* filename)
 	SDL_Texture* texture = IMG_LoadTexture(renderer, filename);
 
 	if (texture == nullptr)
-		// Fichero de imagen no encontrado / inválido
+		// archivo de imagen no encontrado / inválido
 		throw FileNotFoundError(std::string(filename));
 
 	SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
@@ -132,7 +132,6 @@ Texture::renderFrame(const SDL_FRect& rect,
 void
 Texture::render(const SDL_FRect& rect, SDL_Color color) const
 {
-	// Guarda el color original para reestablecerlo después
 	SDL_Color original;
 	SDL_GetTextureColorMod(texture, &original.r, &original.g, &original.b);
 

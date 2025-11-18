@@ -6,12 +6,13 @@
 #include <SDL3/SDL.h>
 
 class SceneObject : public GameObject {
+    friend class Game;
 protected:
 	Point2D pos;
     float w, h;
     Texture* tex;
 
-    SDL_FRect bbox() const;
+    SDL_FRect getBoundingBox() const;
 
 public:
     SceneObject(Game* g, Texture* t, Point2D pos, float W, float H);
@@ -20,7 +21,6 @@ public:
     void update() override;
     void render() const override;
 
-    SDL_FRect getRect() const;
 
     virtual Collision checkCollision(const SDL_FRect& other) ;
 };
