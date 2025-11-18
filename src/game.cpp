@@ -148,14 +148,30 @@ void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo dema
 
         if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_0)
         {
-            SDL_Keymod mods = SDL_GetModState();
-            bool ctrlDown = (mods & SDL_KMOD_CTRL) != 0;
-            bool shiftDown = (mods & SDL_KMOD_SHIFT) != 0;
+            int buttonId = -1;
 
-            if (ctrlDown && shiftDown)
+            const SDL_MessageBoxButtonData buttons[] = {
+                { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "Cancelar" },
+                { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Reiniciar" }
+            };
+
+            const SDL_MessageBoxData msgData = {
+                SDL_MESSAGEBOX_WARNING,            
+                window,                            
+                "Reiniciar partida",                
+                "¿Seguro que quieres reiniciar la partida?", 
+                SDL_arraysize(buttons),
+                buttons,
+                nullptr                              
+            };
+
+            if (SDL_ShowMessageBox(&msgData, &buttonId))
             {
-                reset();
-                return; // evitamos procesar eventos antiguos
+                if (buttonId == 1)
+                {
+                    reset();
+                    return;  
+                }
             }
         }
 
