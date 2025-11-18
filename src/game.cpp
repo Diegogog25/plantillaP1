@@ -150,14 +150,12 @@ void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo dema
         {
             SDL_Keymod mods = SDL_GetModState();
             bool ctrlDown = (mods & SDL_KMOD_CTRL) != 0;
+            bool shiftDown = (mods & SDL_KMOD_SHIFT) != 0;
 
-            const bool* keys = SDL_GetKeyboardState(nullptr);
-            bool qDown = keys[SDL_SCANCODE_Q] != 0;
-
-            if (ctrlDown && qDown)
+            if (ctrlDown && shiftDown)
             {
                 reset();
-                return; // evitamos procesar más eventos antiguos
+                return; // evitamos procesar eventos antiguos
             }
         }
 
