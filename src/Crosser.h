@@ -16,7 +16,7 @@ public:
         Vector2D<> v,
         float left, float right);
 
-    ~Crosser() override = default;
+    virtual ~Crosser();
 
     void update() override ;
 

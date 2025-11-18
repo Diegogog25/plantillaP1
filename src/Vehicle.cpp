@@ -19,7 +19,7 @@ void Vehicle::render() const {
     SceneObject::render();
 }
 
-Collision Vehicle::checkCollision(const SDL_FRect& other) const {
+Collision Vehicle::checkCollision(const SDL_FRect& other) {
     SDL_FRect me = getRect();
     if (SDL_HasRectIntersectionFloat(&me, &other))
         return { Collision::Type::ENEMY, {} };

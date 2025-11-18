@@ -11,6 +11,10 @@ public:
         float vx,
         float leftSpan, float rightSpan);
 
+    using Platform::Platform;
+
+    void update() override;
+    Collision checkCollision(const SDL_FRect& rect) override;
     // Destructor
     ~Log() override;
 };

@@ -27,5 +27,5 @@ public:
     void update() override;
     void render() const override;
 
-    Collision checkCollision(const SDL_FRect& other) const override;
+    Collision checkCollision(const SDL_FRect& other) override;
 };

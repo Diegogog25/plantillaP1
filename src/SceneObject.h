@@ -22,5 +22,5 @@ public:
 
     SDL_FRect getRect() const;
 
-    virtual Collision checkCollision(const SDL_FRect& other) const;
+    virtual Collision checkCollision(const SDL_FRect& other) ;
 };

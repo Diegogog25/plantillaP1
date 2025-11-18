@@ -22,7 +22,8 @@ constexpr array<TexSpec, Game::NUM_TEXTURES> texList{
     {"car5.png", 1, 1},
     {"log1.png", 1, 1},
     {"log2.png", 1, 1},
-    {"wasp.png", 1, 1}
+    {"wasp.png", 1, 1},
+    {"turtle.png",1,7}
 };
 
 Game::Game()
@@ -130,20 +131,12 @@ void Game::loadMap(const char* path)
         }
 
         case 'L': {
-            if (!(ss >> x >> y >> vx))   // SIN type en el mapa original
+            if (!(ss >> x >> y >> vx >> type ))   // SIN type en el mapa original
                 throw FileFormatError(path, lineNum, "Invalid Log line");
 
-            // Si quieres soportar un campo opcional:
-            if (ss >> type) {
-                // si hay un entero al final, lo usamos
-            }
-            else {
-                type = 1; // por defecto
-            }
-
             Texture* t = (type == 2) ? textures[LOG2] : textures[LOG1];
-			pos.setX(x); 
-            pos.setY(y);
+            pos = Point2D(x, y);
+
             addObject(
                 new Log(this, t,
                     pos,
@@ -154,17 +147,16 @@ void Game::loadMap(const char* path)
         }
 
         case 'T': {
-            float w = (float)textures[LOG2]->getFrameWidth();
-            float h = (float)textures[LOG2]->getFrameHeight();
+            float w = (float)textures[TURTLE]->getFrameWidth();
+            float h = (float)textures[TURTLE]->getFrameHeight();
             int n, sink;
 
             if (!(ss >> x >> y >> vx >> n >> sink))
                 throw FileFormatError(path, lineNum, "Invalid TurtleGroup line");
             
-			pos.setX(x);
-			pos.setY(y);
+            pos = Point2D(x, y);
             addObject(
-                new TurtleGroup(this, textures[LOG2],
+                new TurtleGroup(this, textures[TURTLE],
                     pos,
                     w, h,
                     vx / FRAME_RATE,
@@ -231,29 +223,16 @@ void Game::render() const
 
 Collision Game::checkCollision(const SDL_FRect& box) const
 {
+    Collision c;
     for (auto* o : objects)
     {
         if (o == frog) continue;              // <<< evitar auto-colisión
 
-        Collision c = o->checkCollision(box);
-        if (c.type == Collision::Type::ENEMY ||
-            c.type == Collision::Type::HOME)
+        c = o->checkCollision(box);
+        if (c.type != Collision::Type::NONE)
             return c;
     }
-    return {};
-}
-
-Collision Game::checkPlatform(const SDL_FRect& box) const
-{
-    for (auto* o : objects)
-    {
-        if (o == frog) continue;              // <<< igual aquí
-
-        Collision c = o->checkCollision(box);
-        if (c.type == Collision::Type::PLATFORM)
-            return c;
-    }
-    return {};
+    return c;
 }
 
 

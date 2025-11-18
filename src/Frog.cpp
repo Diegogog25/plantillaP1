@@ -31,7 +31,6 @@ void Frog::update() {
         else if (c.type == Collision::Type::HOME) { reset(); return; } // Game marcará nido ocupado
         else if (c.type == Collision::Type::PLATFORM) {
              pos += c.platformVel;
-             std::cout << "plataforma";
              if (pos.getX() < 0 || pos.getX() + w > Game::WINDOW_WIDTH) { loseLife(); reset(); return; }
         }
         else if (c.type == Collision::Type::NONE) {

@@ -4,21 +4,15 @@
 class Platform : public Crosser
 {
 public:
+
+    using Crosser::Crosser;
+    ~Platform();
+
+    Collision checkCollision(const SDL_FRect&frog)  override;
+protected:
     Platform(Game* g, Texture* tex,
-		Point2D pos,
+        Point2D pos,
         float W, float H,
         Vector2D<> v,
-        float left, float right)
-        : Crosser(g, tex, pos, W, H, v, left, right)
-    {
-    }
-
-    ~Platform() override = default;
-
-    Collision checkCollision(const SDL_FRect& other) const override {
-        SDL_FRect me = getRect();
-        if (SDL_HasRectIntersectionFloat(&me, &other))
-            return { Collision::Type::PLATFORM, vel };
-        return{};
-    }
+        float left, float right);
 };

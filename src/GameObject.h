@@ -1,13 +1,13 @@
 #pragma once
+#include <SDL3/SDL.h>
 
-class Game;   // Declaración adelantada
+class Game;
 
 class GameObject {
 protected:
     Game* game;
-
+    GameObject(Game* g);
 public:
-    explicit GameObject(Game* g);
 
     virtual ~GameObject();
 

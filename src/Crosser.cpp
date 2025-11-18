@@ -11,8 +11,9 @@ Crosser::Crosser(Game* g, Texture* tex,
     vel(v),
     leftLimit(left),
     rightLimit(right)
-{
-}
+{}
+
+Crosser::~Crosser() {}
 
 void Crosser::update()
 {

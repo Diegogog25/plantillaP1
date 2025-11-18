@@ -15,7 +15,6 @@
 #include "TurtleGroup.h"
 #include "Vehicle.h"
 #include "Log.h"
-#include "Wasp.h"
 #include "HomedFrog.h"
 #include "Frog.h"
 #include "texture.h"
@@ -28,7 +27,7 @@ public:
     static constexpr int WINDOW_HEIGHT = 484;
     static constexpr int RIVER_LOW = 180;
 
-    enum TextureName { FROG = 0, BACKGROUND, CAR1, CAR2, CAR3, CAR4, CAR5, LOG1, LOG2, WASP, NUM_TEXTURES };
+    enum TextureName { FROG = 0, BACKGROUND, CAR1, CAR2, CAR3, CAR4, CAR5, LOG1, LOG2, WASP, TURTLE, NUM_TEXTURES };
 
     using Anchor = std::list<SceneObject*>::iterator;
 
@@ -46,7 +45,7 @@ private:
     static constexpr int firstH = 20;
     static constexpr int spaceH = 96;
     static constexpr int houseY = 26;
-
+    int homedfrogs = 0;
     // spawn de avispas
     static constexpr int minTime = 200, maxTime = 1000, maxSpawn = 1200;
     int waspTimer = 0;

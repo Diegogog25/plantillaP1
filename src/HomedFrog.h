@@ -15,5 +15,5 @@ public:
     bool isOccupied() const;
 
     void render() const override;
-    Collision checkCollision(const SDL_FRect& rect) const override;
+    Collision checkCollision(const SDL_FRect& rect)  override;
 };

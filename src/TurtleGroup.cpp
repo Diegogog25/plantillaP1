@@ -30,7 +30,7 @@ void TurtleGroup::render() const {
     }
 }
 
-Collision TurtleGroup::checkCollision(const SDL_FRect& other) const {
+Collision TurtleGroup::checkCollision(const SDL_FRect& other){
     if (submerging && sunk) return {};
 
     for (int i = 0; i < numTurtles; ++i) {

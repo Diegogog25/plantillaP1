@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Crosser.h"
 
-// Declaración adelantada
+
 class Game;
 
 class Vehicle : public Crosser {
@@ -15,6 +15,6 @@ public:
     ~Vehicle() override;
 
     void render() const override;
-    Collision checkCollision(const SDL_FRect& other) const override;
+    Collision checkCollision(const SDL_FRect& other)override;
 };
 

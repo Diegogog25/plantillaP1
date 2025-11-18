@@ -25,10 +25,12 @@ SDL_FRect SceneObject::getRect() const {
     return bbox();
 }
 
-Collision SceneObject::checkCollision(const SDL_FRect& other) const {
+Collision SceneObject::checkCollision(const SDL_FRect& other) {
     SDL_FRect me = bbox();
+    Collision col;
     if (SDL_HasRectIntersectionFloat(&me, &other))
-        return { Collision::Type::ENEMY, {} };
+        col.type = Collision::Type::ENEMY;
+    else col.type = Collision::Type::NONE;
 
-    return {};
+    return col;
 }
