@@ -98,6 +98,8 @@
     <ClCompile Include="Frog.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="gameStateMachine.cpp" />
     <ClCompile Include="HomedFrog.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
@@ -115,6 +117,8 @@
     <ClInclude Include="Frog.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="gameStateMachine.h" />
     <ClInclude Include="HomedFrog.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Platform.h" />

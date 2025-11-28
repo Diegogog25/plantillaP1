@@ -245,7 +245,7 @@ void Game::SpawnWasps() // función de spawn de avispas
         waspTimer = 0;
         nextWaspTime = getRandomRange(minTime, maxSpawn);
 
-		// busca y agrupa nidos libres (sin dynamic_cast)
+		// busca y agrupa nidos libres
         std::vector<SceneObject*> freeHomes;
         freeHomes.reserve(5);
         for (SceneObject* o : objects) {
