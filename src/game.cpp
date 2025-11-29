@@ -1,5 +1,7 @@
 #include "game.h"
 #include "Wasp.h"
+#include "MainMenuState.h"
+#include "PlayState.h"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -24,11 +26,29 @@ constexpr array<TexSpec, Game::NUM_TEXTURES> texList{
     {"log1.png", 1, 1},
     {"log2.png", 1, 1},
     {"wasp.png", 1, 1},
-    {"turtle.png",1,7}
+    {"turtle.png",1,7},
+
+    //--UI--
+    {"menuBackground.png", 1, 1},
+    {"/texts/Avispado.png", 1, 1},
+    {"/texts/CONTINUAR.png", 1, 1},
+    {"/texts/ELIGE UN MAPA.png", 1, 1},
+    {"/texts/GAME OVER.png", 1, 1},
+    {"/texts/HAS GANADO.png", 1, 1},
+    {"/texts/left.png", 1, 1},
+    {"/texts/Original.png", 1, 1},
+    {"/texts/Práctica 1.png", 1, 1},
+    {"/texts/REINICIAR.png", 1, 1},
+    {"/texts/right.png", 1, 1},
+    {"/texts/SALIR.png", 1, 1},
+    {"/texts/Trivial.png", 1, 1},
+    {"/texts/Veloz.png", 1, 1},
+    {"/texts/VOLVER AL MENÚ.png", 1, 1}
 };
 
-Game::Game() // constructor
+Game::Game()
 {
+    // SDL_Init devuelve 0 en éxito. Comprobar correctamente errores.
     if (!SDL_Init(SDL_INIT_VIDEO))
         throw SDLError("SDL_Init");
 
@@ -40,16 +60,17 @@ Game::Game() // constructor
     if (!renderer)
         throw SDLError("SDL_CreateRenderer");
 
-    for (size_t i = 0; i < textures.size(); ++i)
-    {
+    for (size_t i = 0; i < textures.size(); ++i) {
         const TexSpec& spec = ::texList[i];
         string path = string(IMG_DIR) + spec.name;
         textures[i] = new Texture(renderer, path.c_str(), spec.rows, spec.cols);
     }
+
+    // Mapa por defecto
+    selectedMap = MAP_FILE;
 }
 
-
-Game::~Game() // destructor
+Game::~Game()
 {
     for (SceneObject* o : objects) delete o;
     objects.clear();
@@ -57,44 +78,51 @@ Game::~Game() // destructor
     for (Texture*& t : textures) { delete t; t = nullptr; }
 
     if (renderer) SDL_DestroyRenderer(renderer);
-    if (window) SDL_DestroyWindow(window);
+    if (window)   SDL_DestroyWindow(window);
     SDL_Quit();
 }
 
-void Game::initHomedFrogs() // inicializa nidos de HomedFrog
+void Game::initHomedFrogs()
 {
     if (homedSpawned) return;
 
-    homedfrogs = 0;
+    currentHomedFrogs = 0;
 
-    // Coloca las HomedFrog
     for (int i = 0; i < 5; ++i) {
         float x = float(firstH + i * spaceH);
         float y = float(houseY);
-        addObject(new HomedFrog(this, textures[FROG], Point2D(x, y)));
+        HomedFrog* homedFrog = new HomedFrog(this, textures[FROG], Point2D(x, y));
+        addObject(homedFrog);
+        homedFrogs.push_back(homedFrog);
     }
 
     homedSpawned = true;
 }
 
-void Game::reset() // reinicia partida
+void Game::reset()
 {
+    // Limpia escena y listas
     for (SceneObject* o : objects) delete o;
     objects.clear();
     toDelete.clear();
     frog = nullptr;
 
+    // Reinicia nidos y contadores
     homedSpawned = false;
+    occupied = 0;
+    currentHomedFrogs = 0;
+    homedFrogs.clear();
     initHomedFrogs();
 
-    // Inicializa temporizador de avispas
+    // Reinicia spawn de avispas
     waspTimer = 0;
     nextWaspTime = getRandomRange(minTime, maxTime);
 
-    loadMap(MAP_FILE);
+    // Carga el mapa seleccionado
+    loadMap(selectedMap.c_str());
 }
 
-void Game::loadMap(const char* path) // carga mapa desde archivo
+void Game::loadMap(const char* path)
 {
     ifstream file(path);
     if (!file)
@@ -103,14 +131,12 @@ void Game::loadMap(const char* path) // carga mapa desde archivo
     string line;
     int lineNum = 0;
 
-    while (getline(file, line))
-    {
+    while (getline(file, line)) {
         ++lineNum;
         if (line.empty() || line[0] == '#') continue;
         stringstream ss(line);
         char id; ss >> id;
-        switch (id)
-        {
+        switch (id) {
         case 'F': {
             frog = Frog::FromMap(this, ss, path, lineNum);
             addObject(frog);
@@ -128,47 +154,21 @@ void Game::loadMap(const char* path) // carga mapa desde archivo
             addObject(TurtleGroup::FromMap(this, ss, path, lineNum));
             break;
         }
+        case 'W': {
+            Wasp* w = Wasp::FromMap(this, ss, path, lineNum);
+            Anchor an = addObject(w);
+            w->setAnchor(an);
+            break;
+        }
         default:
             throw FileFormatError(path, lineNum, std::string("Unknown id: ") + id);
         }
     }
 }
 
-
-void Game::handleEvents() // manejo de eventos (principalmente reinicio, lo demas lo gestiona frog)
+void Game::update()
 {
-    SDL_Event e;
-    while (SDL_PollEvent(&e))
-    {
-        if (e.type == SDL_EVENT_QUIT)
-            exit = true;
-
-        if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_0)
-        {
-            int buttonId = -1;
-            const SDL_MessageBoxButtonData buttons[] = {
-                { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "Cancelar" },
-                { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Reiniciar" }
-            };
-            const SDL_MessageBoxData msgData = {
-                SDL_MESSAGEBOX_WARNING, window, "Reiniciar partida", "¿Seguro que quieres reiniciar la partida?", SDL_arraysize(buttons), buttons, nullptr                              
-            };
-            if (SDL_ShowMessageBox(&msgData, &buttonId))
-            {
-                if (buttonId == 1)
-                {
-                    reset();
-                    return;  
-                }
-            }
-        }
-        if (frog)
-            frog->handleEvents(e);
-    }
-}
-
-void Game::update() // actualización de todos los objetos
-{
+    // Lógica propia de la partida (invocada desde PlayState)
     SpawnWasps();
 
     for (auto it = objects.begin(); it != objects.end(); ++it)
@@ -176,34 +176,36 @@ void Game::update() // actualización de todos los objetos
 
     flushDeletions();
 
-    // Comprobar victoria: 5 nidos ocupados => fin de partida
-    int occupied = 0;
-    for (SceneObject* o : objects) {
-        if (o->isHome() && o->isHomeOccupied()) ++occupied;
+    // Fin por vidas
+    if (frog && frog->getLives() <= 0) {
+        exit = true;
+        return;
     }
-    homedfrogs = occupied;
-    if (homedfrogs >= 5) {
-        exit = true; // saldrá del bucle en run()
+
+    // Conteo de nidos ocupados
+    occupied = 0;
+    for (HomedFrog* o : homedFrogs) {
+        if (o->isOccupied()) ++occupied;
+    }
+    currentHomedFrogs = occupied;
+    if (currentHomedFrogs >= 5) {
+        exit = true;
     }
 }
 
-void Game::render() const // renderizado de todos los objetos
+void Game::render() const
 {
-    SDL_RenderClear(renderer);
-
+    // Solo dibuja la escena; el clear/present lo gestiona el bucle principal/estados
     textures[BACKGROUND]->render();
 
     for (SceneObject* o : objects)
         o->render();
-
-    SDL_RenderPresent(renderer);
 }
 
-Collision Game::checkCollision(const SDL_FRect& box) const // colisiones de todos los objetos
+Collision Game::checkCollision(const SDL_FRect& box) const
 {
     Collision c;
-    for (SceneObject* o : objects)
-    {
+    for (SceneObject* o : objects) {
         if (o == frog) continue;
 
         c = o->checkCollision(box);
@@ -213,51 +215,31 @@ Collision Game::checkCollision(const SDL_FRect& box) const // colisiones de todo
     return c;
 }
 
-
-void Game::flushDeletions() // elimina objetos marcados para borrado (avispas caducadas)
+void Game::flushDeletions()
 {
-    for (auto it : toDelete)
-    {
+    for (auto it : toDelete) {
         delete* it;
         objects.erase(it);
     }
     toDelete.clear();
 }
 
-void Game::run() // bucle principal del juego
+void Game::SpawnWasps()
 {
-	reset();
-
-    while (!exit && frog && frog->getLives() > 0)
-    {
-        handleEvents();
-        update();
-        render();
-        SDL_Delay(1000 / FRAME_RATE);
-    }
-}
-
-void Game::SpawnWasps() // función de spawn de avispas
-{
-    // Spawn de avispas
     waspTimer++;
     if (waspTimer >= nextWaspTime) {
         waspTimer = 0;
         nextWaspTime = getRandomRange(minTime, maxSpawn);
 
-		// busca y agrupa nidos libres
         std::vector<SceneObject*> freeHomes;
         freeHomes.reserve(5);
-        for (SceneObject* o : objects) {
-            if (o->isHome() && !o->isHomeOccupied()) {
+        for (HomedFrog* o : homedFrogs) {
+            if (!o->isOccupied()) {
                 freeHomes.push_back(o);
             }
         }
-
-        // Si no hay nidos libres, no spawneamos ahora
         if (freeHomes.empty()) return;
 
-        // Elige un nido libre aleatorio
         SceneObject* target = freeHomes[getRandomRange(0, (int)freeHomes.size() - 1)];
 
         const int waspW = textures[WASP]->getFrameWidth();
@@ -267,10 +249,60 @@ void Game::SpawnWasps() // función de spawn de avispas
         const float x = homeRect.x + (homeRect.w - waspW) * 0.5f;
         const float y = homeRect.y + (homeRect.h - waspH) * 0.5f;
 
-        Wasp* w = new Wasp(this, textures[WASP], Point2D(x, y), 2500 );
+        Wasp* w = new Wasp(this, textures[WASP], Point2D(x, y), 2500);
         Anchor an = addObject(w);
         w->setAnchor(an);
     }
 }
 
+void Game::run()
+{
+    const double targetFrameMs = 1000.0 / FRAME_RATE;
+    const Uint64 perfFreq = SDL_GetPerformanceFrequency();
+
+    exit = false;
+    clearStartRequest();
+
+    // Estado inicial: menú principal
+    pushState(new MainMenuState(this, this));
+
+    while (!exit && !empty()) {
+        Uint64 frameStart = SDL_GetPerformanceCounter();
+
+        // Entrada: delegada en el estado activo
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_EVENT_QUIT) {
+                while (!empty()) popState();
+                exit = true;
+                break;
+            }
+            GameStateMachine::handleEvents(e);
+        }
+
+        if (empty() || exit) break;
+
+        // ¿El menú ha pedido empezar la partida?
+        if (startRequested) {
+            clearStartRequest();
+            replaceState(new PlayState(this, this));
+        }
+
+        // Lógica + render delegados
+        GameStateMachine::update();
+
+        SDL_RenderClear(renderer);
+        GameStateMachine::render();
+        SDL_RenderPresent(renderer);
+
+        // Pacing de frames
+        Uint64 frameEnd = SDL_GetPerformanceCounter();
+        double elapsedMs = (frameEnd - frameStart) * 1000.0 / perfFreq;
+        double sleepMs = targetFrameMs - elapsedMs;
+        if (sleepMs > 0.0)
+            SDL_Delay((Uint32)(sleepMs + 0.5));
+    }
+
+    while (!empty()) popState();
+}
 

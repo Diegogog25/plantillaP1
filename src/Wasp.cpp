@@ -1,6 +1,8 @@
 ﻿#include "Wasp.h"
 #include "game.h"
 #include <SDL3/SDL_timer.h>
+#include "Errors.h"
+#include <istream>
 
 Wasp::Wasp(Game* g, Texture* t, const Point2D& pos, Uint32 lifetimeMs) // constructor
     : SceneObject(g, t, pos, (float)t->getFrameWidth(), (float)t->getFrameHeight())
@@ -37,4 +39,17 @@ Collision Wasp::checkCollision(const SDL_FRect& other) { // colisiones
     if (SDL_HasRectIntersectionFloat(&me, &other))
         return { Collision::Type::ENEMY, {} };
     return {};
+}
+
+Wasp* Wasp::FromMap(Game* g, std::istream& ss, const char* path, int lineNum)
+{
+    float x, y;
+    unsigned int lifetimeMs = 2500;
+    if (!(ss >> x >> y))
+        throw FileFormatError(path, lineNum, "Invalid Wasp line (faltan x y)");
+    if (!(ss >> lifetimeMs)) {
+        lifetimeMs = 2500; // lifetime opcional
+    }
+    Texture* t = g->getTexture(Game::WASP);
+    return new Wasp(g, t, Point2D(x, y), lifetimeMs);
 }

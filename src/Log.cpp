@@ -24,7 +24,9 @@ SceneObject* Log::FromMap(Game* g, std::istream& ss, const char* path, int lineN
     if (!(ss >> x >> y >> vx >> type))
         throw FileFormatError(path, lineNum, "Invalid Log line");
 
-    Texture* t = (type == 1) ? g->getTexture(Game::LOG2) : g->getTexture(Game::LOG1);
+    if (type < 0 || type > 1)
+		throw FileFormatError(path, lineNum, "Invalid Log type");
+	Texture* t = g->getTexture((Game::TextureName)(Game::LOG1 + type));
 
     const float leftSpan = -150.0f;
     const float rightSpan = (float)Game::WINDOW_WIDTH + 150.0f;

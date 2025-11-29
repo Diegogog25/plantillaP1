@@ -4,7 +4,7 @@
 #include <memory>
 #include <stack>
 
-#include "gameState.h"
+#include "GameState.h"
 #include <SDL3/SDL.h>
 
 /**
@@ -41,7 +41,7 @@ public:
 	// sobre el estado actual (no hacen nada si la pila es vacía)
 	void update();
 	void render() const;
-	void handleEvent(const SDL_Event& event);
+	void handleEvents(const SDL_Event& event);
 };
 
 inline void

@@ -46,16 +46,14 @@ void Frog::update() { // actualización de posición, colisiones y animación
         if (c.type == Collision::Type::ENEMY) { loseLife(); reset(); return; }
         if (c.type == Collision::Type::HOME)  { reset(); return; }
         return;
-    }
-    else {
+    } else {
         if (c.type == Collision::Type::ENEMY) { loseLife(); reset(); return; }
-        else if (c.type == Collision::Type::HOME) { reset(); return; } // Game marcará nido ocupado
+        else if (c.type == Collision::Type::HOME) { reset(); return; }
         else if (c.type == Collision::Type::PLATFORM) {
              pos += c.platformVel;
              if (pos.getX() < 0 || pos.getX() + w > Game::WINDOW_WIDTH) { loseLife(); reset(); return; }
         }
         else if (c.type == Collision::Type::NONE) {
-            // agua
             if (pos.getY() < Game::RIVER_LOW) { loseLife(); reset(); return; }
         }
     }

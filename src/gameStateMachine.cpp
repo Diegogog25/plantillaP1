@@ -1,4 +1,5 @@
-#include "gameStateMachine.h"
+#include "GameStateMachine.h"
+#include "GameState.h"
 
 using namespace std;
 
@@ -62,10 +63,10 @@ GameStateMachine::render() const
 }
 
 void
-GameStateMachine::handleEvent(const SDL_Event& event)
+GameStateMachine::handleEvents(const SDL_Event& event)
 {
 	if (!gameStates.empty()) {
 		shared_ptr<GameState> current = gameStates.top();
-		current->handleEvent(event);
+		current->handleEvents(event);
 	}
 }

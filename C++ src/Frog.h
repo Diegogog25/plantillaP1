@@ -1,8 +1,9 @@
 #pragma once
 #include "SceneObject.h"
+#include "EventHandler.h"
 #include <iosfwd> // std::istream
 
-class Frog : public SceneObject {
+class Frog : public SceneObject, public EventHandler {
     // animación y control
     float angle = 0.f;
     int   jumpFrames = 0;
@@ -31,6 +32,7 @@ public:
     void reset() { pos.setX(startPos.getX()); pos.setY(startPos.getY()); moving = false; framesLeft = 0; jumpFrames = 0; step.setX(0); step.setY(0); }
 
     void handleEvents(const SDL_Event& e);
+    void handleEvent(const SDL_Event& e) override { handleEvents(e); } // adapta a la interfaz EventHandler (singular)
     void update() override;
     void render() const override;
 };

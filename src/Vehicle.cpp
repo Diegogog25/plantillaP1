@@ -22,13 +22,10 @@ SceneObject* Vehicle::FromMap(Game* g, std::istream& ss, const char* path, int l
     float x, y, vx; int type;
     if (!(ss >> x >> y >> vx >> type))
         throw FileFormatError(path, lineNum, "Invalid Vehicle line");
+    if (type < 1 || type > 5)
+		throw FileFormatError(path, lineNum, "Invalid Vehicle type");
+    Texture* t = g->getTexture((Game::TextureName)(Game::CAR1 + type - 1));
 
-    Texture* t =
-        (type == 1) ? g->getTexture(Game::CAR1) :
-        (type == 2) ? g->getTexture(Game::CAR2) :
-        (type == 3) ? g->getTexture(Game::CAR3) :
-        (type == 4) ? g->getTexture(Game::CAR4) :
-        g->getTexture(Game::CAR5);
 
     // Usa el ancho real del sprite para calcular los spans y reducir el desfase
     const float w = (float)t->getFrameWidth();
