@@ -4,41 +4,45 @@
 #include "game.h"
 #include "gameStateMachine.h"
 #include "Texture.h"
+#include "MainMenuState.h"
 
 EndState::EndState(Game* g, GameStateMachine* gsm, Texture* tex)
     : GameState(g, gsm)
 {
-    // Rectángulos de los objetos
-    SDL_FRect msgRect{ 120.f, 100.f, 200.f, 40.f };
-    SDL_FRect mainRect{ 140.f, 180.f, 160.f, 40.f };
-    SDL_FRect quitRect{ 140.f, 240.f, 160.f, 40.f };
-
     Texture* volverTx = g->getTexture(Game::VOLVER_MENU);
     Texture* salirTx = g->getTexture(Game::SALIR);
-    // Crear los objetos del menú
-    messageLabel = new Label(g, tex, msgRect);
-    mainMenuButton = new Button(g, volverTx, mainRect);
-    quitButton = new Button(g, salirTx, quitRect);
 
-    // Añadirlos al estado
+    // Rectángulos de los objetos
+    SDL_FRect msgRect{ 130.f, 100.f, tex->getFrameWidth(),tex->getFrameHeight()};
+    SDL_FRect volverRect{ 84.f, 200.f, volverTx->getFrameWidth(), volverTx->getFrameHeight()};
+    SDL_FRect salirRect{ 174.f, 270.f, salirTx->getFrameWidth(), salirTx->getFrameHeight() };
+
+
+    //Creamos botones
+    messageLabel = new Label(g, tex, msgRect);
+    mainMenuButton = new Button(g, volverTx, volverRect);
+    quitButton = new Button(g, salirTx, salirRect);
+
     addObject(messageLabel);
     addObject(mainMenuButton);
     addObject(quitButton);
 
-    // Registrar listeners
     addEventListener(mainMenuButton);
     addEventListener(quitButton);
 
-    // Conectar acciones de los botones
     mainMenuButton->connect([this]() {
-        if (!gameMachine) return;
+        if (!game || !gameMachine) return;
+
+        // Vacio todos los estados
         while (!gameMachine->empty())
             gameMachine->popState();
+        //Mete como unico estado el mainmenu
+        gameMachine->pushState(new MainMenuState(game, gameMachine));
         });
 
     quitButton->connect([this]() {
         if (!game) return;
-        game->exitTrue();  // tu bool 'exit' en Game
+        game->exitTrue(); //Pone Exit = true para salir del bucle
         });
 }
 

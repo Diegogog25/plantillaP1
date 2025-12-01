@@ -7,14 +7,6 @@ class SceneObject;
 class Frog;
 struct Collision;
 
-/**
- * Estado de juego principal (partida).
- * En el futuro moveremos aquí casi todo lo que ahora está en Game:
- *  - carga de mapas
- *  - colisiones
- *  - spawn de avispas
- *  - etc.
- */
 class PlayState : public GameState {
 private:
     std::list<SceneObject*> sceneObjects;
@@ -30,11 +22,11 @@ public:
     void render() const override;
     void handleEvents(const SDL_Event& e) override;
 
-    // Gestión de objetos de escena
+    // Gestión de objetos
     SceneAnchor addSceneObject(SceneObject* o);
     void removeSceneObject(SceneAnchor it);
 
-    // Colisiones contra los objetos de escena
+    // Colisiones 
     Collision checkCollision(const SDL_FRect& box) const;
 
     void checkEnd();

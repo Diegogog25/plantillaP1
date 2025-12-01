@@ -3,7 +3,7 @@
 #include "Frog.h"
 #include "collision.h"
 #include "game.h"
-#include "PauseState.h" // <-- añadir
+#include "PauseState.h"
 #include "EndState.h"
 
 #include <SDL3/SDL.h>
@@ -12,7 +12,7 @@ PlayState::PlayState(Game* g, GameStateMachine* gsm)
     : GameState(g, gsm)
 {
     if (game) {
-        // Prepara la partida con el mapa actualmente seleccionado en el menú
+        // Crea la partida con el mapa seleccionado
         game->reset();
         frog = game->getFrog();
     }
@@ -20,8 +20,6 @@ PlayState::PlayState(Game* g, GameStateMachine* gsm)
 
 PlayState::~PlayState()
 {
-    // PlayState es propietario solo de sus propios SceneObject de escena
-    // (por ahora no estamos usando sceneObjects, pero lo dejamos preparado)
     for (SceneObject* o : sceneObjects) {
         delete o;
     }
@@ -32,9 +30,7 @@ void PlayState::update()
 {
     if (!game) return;
 
-    // Lógica principal de Frogger (rana, coches, troncos, tortugas, avispas...)
     game->update();
-
     Frog* frog = game->getFrog();
 
 }
@@ -43,10 +39,7 @@ void PlayState::render() const
 {
     if (!game) return;
 
-    // Fondo + escena del juego
     game->render();
-
-    // Si en el futuro añadimos HUD / UI propio de este estado:
     GameState::render();
 }
 
@@ -54,13 +47,13 @@ void PlayState::handleEvents(const SDL_Event& e)
 {
     if (!game) return;
 
-    // ESC -> abrir menú de pausa (apilar estado)
+    // ESC - abre menú de pausa 
     if (e.type == SDL_EVENT_KEY_DOWN && !e.key.repeat && e.key.key == SDLK_ESCAPE) {
         game->pushState(new PauseState(game, nullptr)); // evitar conversión a GameStateMachine*
         return; // no propagar a la rana
     }
 
-    // Tecla 0: pedir confirmación para reiniciar la partida
+    // Tecla 0 - pide confirmación para reiniciar
     if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_0) {
         int buttonId = -1;
         const SDL_MessageBoxButtonData buttons[] = {
@@ -94,11 +87,9 @@ void PlayState::handleEvents(const SDL_Event& e)
         frog->handleEvents(e);
     }
 
-    // Y por último, cualquier listener registrado en este estado (HUD, etc.)
     GameState::handleEvents(e);
 }
 
-// --- Parte de "escena propia" de PlayState (de momento sin usar) ---
 
 PlayState::SceneAnchor PlayState::addSceneObject(SceneObject* o)
 {
@@ -122,6 +113,7 @@ Collision PlayState::checkCollision(const SDL_FRect& box) const
     }
     return c;
 }
+//Comprueba si ha ganado o no y pasa la respectiva textura a endState
 void PlayState::checkEnd(){
         Frog* f = game->getFrog();
 

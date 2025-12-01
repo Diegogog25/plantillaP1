@@ -6,9 +6,6 @@
 class Label;
 class Button;
 
-/**
- * Menú de fin de partida (ganar / perder).
- */
 class EndState : public GameState {
 private:
     Label* messageLabel = nullptr;

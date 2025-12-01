@@ -12,7 +12,6 @@ PauseState::PauseState(Game* g, GameStateMachine* gsm)
 {
     if (!g) return;
 
-    // Ya no usamos la textura MENUBACKGROUND; fondo será un rect negro semitransparente.
     Texture* continuarTx = g->getTexture(Game::CONTINUAR);
     Texture* reiniciarTx = g->getTexture(Game::REINICIAR);
     Texture* volverTx = g->getTexture(Game::VOLVER_MENU);
@@ -28,7 +27,7 @@ PauseState::PauseState(Game* g, GameStateMachine* gsm)
     mainMenuButton = new Button(g, volverTx, volverRect);
     exitButton = new Button(g, salirTx, salirRect);
 
-    // Añadimos solo los botones (pauseLabel se deja en nullptr para no dibujar textura de fondo)
+    // Añadimos los botones
     addObject(resumeButton);
     addObject(restartButton);
     addObject(mainMenuButton);
@@ -51,7 +50,7 @@ PauseState::PauseState(Game* g, GameStateMachine* gsm)
 
         // Quita el PauseState (cima)
         game->popState();
-        // Reemplaza el estado que quede (p.ej. PlayState) por el MainMenuState
+        // Reemplaza el estado que este por el MainMenuState
         game->replaceState(std::make_shared<MainMenuState>(game, gameMachine));
     });
     exitButton->connect([this]() {
@@ -71,19 +70,18 @@ void PauseState::update()
 
 void PauseState::render() const
 {
-    // Escena del juego debajo (congelada)
+    // Escena del juego debajo,pero parada
     if (game) game->render();
 
-    // Overlay semitransparente negro
     if (game) {
         SDL_Renderer* r = game->getRenderer();
         SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);
-        SDL_SetRenderDrawColor(r, 0, 0, 0, 140); // alpha ~55%
+        SDL_SetRenderDrawColor(r, 0, 0, 0, 140); 
         SDL_FRect rect{ 0.f, 0.f, (float)Game::WINDOW_WIDTH, (float)Game::WINDOW_HEIGHT };
         SDL_RenderFillRect(r, &rect);
     }
 
-    // UI (botones) encima del overlay
+    // botones encima del overlay
     GameState::render();
 }
 

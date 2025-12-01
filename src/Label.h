@@ -4,10 +4,6 @@
 #include "texture.h"
 #include <SDL3/SDL.h>
 
-/**
- * Etiqueta de imagen estática en pantalla.
- * (Más adelante puedes cambiarla para usar SDL_ttf y texto real.)
- */
 class Label : public GameObject {
 protected:
     Texture* texture = nullptr;

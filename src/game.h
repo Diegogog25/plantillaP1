@@ -88,7 +88,7 @@ private:
     int waspTimer = 0;
     int nextWaspTime = 0;
 
-    // --- NUEVO: datos del menú principal ---
+    // Datos del menú principal
     bool        startRequested = false;
     std::string selectedMap = "./assets/maps/turtles.txt";
 
@@ -122,7 +122,7 @@ public:
     SDL_Renderer* getRenderer() const { return renderer; }
     Frog* getFrog() const { return frog; }
 
-    // --- NUEVO: interfaz para el menú ---
+    //Interfaz para el menu
     void setSelectedMap(const std::string& path) { selectedMap = path; }
     const std::string& getSelectedMap() const { return selectedMap; }
 
@@ -133,8 +133,6 @@ public:
     void startPlayState();
     void exitTrue() { exit = true;}
 private:
-    void handleEvents(); // ya no lo usaremos desde run(), pero lo dejamos por si acaso
-    void runPauseMenu();
     void initHomedFrogs();
     void SpawnWasps();
 };

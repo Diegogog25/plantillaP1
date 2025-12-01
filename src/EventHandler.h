@@ -4,5 +4,5 @@
 class EventHandler {
 public:
     virtual ~EventHandler() = default;
-    virtual void handleEvent(const SDL_Event& e) = 0; // singular
+    virtual void handleEvent(const SDL_Event& e) = 0; 
 };

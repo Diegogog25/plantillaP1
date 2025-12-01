@@ -210,6 +210,7 @@ void Game::flushDeletions()
     }
     toDelete.clear();
 }
+//Para poder comprobar si ha ganado en PlayState
 bool Game::checkVictory() {
     occupied = 0;
     for (HomedFrog* o : homedFrogs) {
@@ -250,6 +251,7 @@ void Game::SpawnWasps()
         w->setAnchor(an);
     }
 }
+//Se usa para coger un puntero playState, para usar el metodo checkEnd de playState
 void Game::startPlayState() {
     auto ps = new PlayState(this, this);   
     replaceState(ps);                       
@@ -270,7 +272,6 @@ void Game::run()
     while (!exit && !empty()) {
         Uint64 frameStart = SDL_GetPerformanceCounter();
 
-        // Entrada: delegada en el estado activo
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_EVENT_QUIT) {
@@ -283,13 +284,12 @@ void Game::run()
 
         if (empty() || exit) break;
 
-        // ¿El menú ha pedido empezar la partida?
+        // Si ha empezado ya la partida
         if (startRequested) {
             clearStartRequest();
             startPlayState();
         }
 
-        // Lógica + render delegados
         GameStateMachine::update();
 
         SDL_RenderClear(renderer);

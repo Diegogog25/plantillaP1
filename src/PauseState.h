@@ -5,14 +5,6 @@
 class Label;
 class Button;
 
-/**
- * Menú de pausa.
- * Opciones:
- *  - Continuar (reanudar partida)
- *  - Reiniciar partida
- *  - Volver al menú principal
- *  - Salir del juego
- */
 class PauseState : public GameState {
 private:
     Label* pauseLabel = nullptr;  // fondo del menú

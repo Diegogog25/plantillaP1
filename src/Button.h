@@ -5,12 +5,6 @@
 #include <functional>
 #include <vector>
 
-/**
- * Botón clicable:
- *  - se pinta como una Label
- *  - recibe eventos (EventHandler)
- *  - ejecuta callbacks al pulsarlo
- */
 class Button : public Label, public EventHandler {
 public:
     using Callback = std::function<void()>;
@@ -30,8 +24,8 @@ public:
     ~Button() override = default;
 
     void connect(Callback cb);              // registrar callback
-    void render() const override;           // resalta si hovered
-    void update() override;                 // de momento vacío
+    void render() const override;           
+    void update() override;                 
     void handleEvent(const SDL_Event& e) override;
 
     bool isHovered() const { return hovered; }
