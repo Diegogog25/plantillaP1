@@ -1,4 +1,4 @@
-#include "Button.h"
+Ôªø#include "Button.h"
 #include <SDL3/SDL.h>
 
 Button::Button(Game* g, Texture* tex, const SDL_FRect& r)
@@ -17,7 +17,7 @@ void Button::render() const
 
     SDL_FRect dst = rect;
 
-    // PequeÒo ìzoomî si el ratÛn est· encima
+    // Peque√±o ‚Äúzoom‚Äù si el rat√≥n est√° encima
     if (hovered) {
         dst.x -= 2.f;
         dst.y -= 2.f;
@@ -35,7 +35,7 @@ void Button::render() const
 
 void Button::update()
 {
-    // No hay lÛgica interna por ahora
+    // No hay l√≥gica interna por ahora
 }
 
 void Button::handleEvent(const SDL_Event& e) {

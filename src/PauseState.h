@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "GameState.h"
 
@@ -7,10 +7,10 @@ class Button;
 
 class PauseState : public GameState {
 private:
-    Label* pauseLabel = nullptr;  // fondo del menú
+    Label* pauseLabel = nullptr;  // fondo del menÃº
     Button* resumeButton = nullptr;  // CONTINUAR
     Button* restartButton = nullptr;  // REINICIAR
-    Button* mainMenuButton = nullptr;  // VOLVER MENÚ
+    Button* mainMenuButton = nullptr;  // VOLVER MENÃš
     Button* exitButton = nullptr;      // SALIR
 
 public:

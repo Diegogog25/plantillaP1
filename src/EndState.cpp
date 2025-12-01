@@ -1,4 +1,4 @@
-#include "EndState.h"
+﻿#include "EndState.h"
 #include "Label.h"
 #include "Button.h"
 #include "game.h"
@@ -12,7 +12,7 @@ EndState::EndState(Game* g, GameStateMachine* gsm, Texture* tex)
     Texture* volverTx = g->getTexture(Game::VOLVER_MENU);
     Texture* salirTx = g->getTexture(Game::SALIR);
 
-    // Rect�ngulos de los objetos
+    // Rectángulos de los objetos
     SDL_FRect msgRect{ 130.f, 100.f, tex->getFrameWidth(),tex->getFrameHeight()};
     SDL_FRect volverRect{ 84.f, 200.f, volverTx->getFrameWidth(), volverTx->getFrameHeight()};
     SDL_FRect salirRect{ 174.f, 270.f, salirTx->getFrameWidth(), salirTx->getFrameHeight() };

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "GameState.h"
 #include <vector>
@@ -8,17 +8,17 @@ class Label;
 class Button;
 
 /**
- * Menú principal:
+ * MenÃº principal:
  *  - Muestra "ELIGE UN MAPA"
  *  - Selector de mapa con flechas
- *  - Botón CONTINUAR (empezar partida)
- *  - Botón SALIR
+ *  - BotÃ³n CONTINUAR (empezar partida)
+ *  - BotÃ³n SALIR
  */
 class MainMenuState : public GameState {
 private:
     // Mapas detectados en ../assets/maps
     std::vector<std::string> mapPaths; // rutas completas
-    std::vector<std::string> mapNames; // nombres sin extensión
+    std::vector<std::string> mapNames; // nombres sin extensiÃ³n
     int currentIndex = 0;
 
     // UI

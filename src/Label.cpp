@@ -1,4 +1,4 @@
-#include "Label.h"
+ï»¿#include "Label.h"
 
 Label::Label(Game* g, Texture* tex, const SDL_FRect& r)
     : GameObject(g), texture(tex), rect(r)
@@ -14,7 +14,3 @@ void Label::render() const
     }
 }
 
-void Label::update()
-{
-    // Etiqueta estática: no hace nada
-}

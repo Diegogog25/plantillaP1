@@ -1,4 +1,4 @@
-#include "MainMenuState.h"
+ï»¿#include "MainMenuState.h"
 
 #include "Label.h"
 #include "Button.h"
@@ -18,16 +18,16 @@ static Game::TextureName mapNameToTexture(const std::string& name) {
     std::string FileName = name;
     for (size_t i = 0; i < FileName.size(); ++i) {
         unsigned char uc = (unsigned char)FileName[i];   // paso seguro a unsigned char
-        FileName[i] = (char)std::tolower(uc);            // tolower por carácter
+        FileName[i] = (char)std::tolower(uc);            // tolower por carÃ¡cter
     }
 
     if (FileName == "original")  return Game::ORIGINAL;
-    if (FileName == "practica 1" || FileName == "práctica 1") return Game::PRACTICA1;
+    if (FileName == "practica 1" || FileName == "prÃ¡ctica 1") return Game::PRACTICA1;
     if (FileName == "trivial")   return Game::TRIVIAL;
     if (FileName == "veloz")     return Game::VELOZ;
     if (FileName == "avispado")  return Game::AVISPADO;
 
-    // Por si aparece algún mapa nuevo sin textura específica
+    // Por si aparece algÃºn mapa nuevo sin textura especÃ­fica
     return Game::ORIGINAL;
 }
 
@@ -44,7 +44,7 @@ MainMenuState::MainMenuState(Game* g, GameStateMachine* gsm)
 	Texture* exitTex = g->getTexture(Game::SALIR);
     Texture* initialMapTex = mapNames.empty() ? g->getTexture(Game::ORIGINAL) : g->getTexture(mapNameToTexture(mapNames[currentIndex]));
         
-    // Coordenadas "más o menos" centradas. Ajusta si hace falta.
+    // Coordenadas "mÃ¡s o menos" centradas. Ajusta si hace falta.
     SDL_FRect titleRect{ 94.f,  200.f, titleTex->getFrameWidth(), titleTex->getFrameHeight()}; // "ELIGE UN MAPA"
     SDL_FRect mapRect{ 224.f - initialMapTex->getFrameWidth() / 2, 270.f, initialMapTex->getFrameWidth(), initialMapTex->getFrameHeight()}; // nombre del mapa
     SDL_FRect leftRect{ 80.f, 270.f,  leftTex->getFrameWidth(), leftTex->getFrameHeight()}; // flecha izquierda
@@ -75,8 +75,8 @@ MainMenuState::MainMenuState(Game* g, GameStateMachine* gsm)
         if (!mapPaths.empty())
             game->setSelectedMap(mapPaths[currentIndex]);
 
-        // Solo marcamos que queremos empezar; Game::run se encargará de
-        // sustituir el menú por el PlayState.
+        // Solo marcamos que queremos empezar; Game::run se encargarÃ¡ de
+        // sustituir el menÃº por el PlayState.
         game->requestStartGame();
      });
 
@@ -141,7 +141,7 @@ void MainMenuState::update()
 
 void MainMenuState::render() const
 {
-    // Fondo: puedes usar el BACKGROUND del juego, o más tarde una textura específica
+    // Fondo: puedes usar el BACKGROUND del juego, o mÃ¡s tarde una textura especÃ­fica
     if (game) {
         game->getTexture(Game::MENUBACKGROUND)->render();
     }
@@ -188,6 +188,6 @@ void MainMenuState::handleEvents(const SDL_Event& e)
         }
     }
 
-    // Ratón (botones CONTINUAR y SALIR)
+    // RatÃ³n (botones CONTINUAR y SALIR)
     GameState::handleEvents(e);
 }

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GameState.h"
 #include <list>
@@ -22,7 +22,7 @@ public:
     void render() const override;
     void handleEvents(const SDL_Event& e) override;
 
-    // Gesti�n de objetos
+    // Gestión de objetos
     SceneAnchor addSceneObject(SceneObject* o);
     void removeSceneObject(SceneAnchor it);
 

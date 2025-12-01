@@ -1,4 +1,4 @@
-#include "PlayState.h"
+ï»¿#include "PlayState.h"
 #include "SceneObject.h"
 #include "Frog.h"
 #include "collision.h"
@@ -47,13 +47,13 @@ void PlayState::handleEvents(const SDL_Event& e)
 {
     if (!game) return;
 
-    // ESC - abre menú de pausa 
+    // ESC - abre menÃº de pausa 
     if (e.type == SDL_EVENT_KEY_DOWN && !e.key.repeat && e.key.key == SDLK_ESCAPE) {
-        game->pushState(new PauseState(game, nullptr)); // evitar conversión a GameStateMachine*
+        game->pushState(new PauseState(game, nullptr)); // evitar conversiÃ³n a GameStateMachine*
         return; // no propagar a la rana
     }
 
-    // Tecla 0 - pide confirmación para reiniciar
+    // Tecla 0 - pide confirmaciÃ³n para reiniciar
     if (e.type == SDL_EVENT_KEY_DOWN && e.key.key == SDLK_0) {
         int buttonId = -1;
         const SDL_MessageBoxButtonData buttons[] = {
@@ -64,7 +64,7 @@ void PlayState::handleEvents(const SDL_Event& e)
             SDL_MESSAGEBOX_WARNING,
             nullptr,                         // ventana padre (opcional)
             "Reiniciar partida",
-            "¿Seguro que quieres reiniciar la partida?",
+            "Â¿Seguro que quieres reiniciar la partida?",
             SDL_arraysize(buttons),
             buttons,
             nullptr

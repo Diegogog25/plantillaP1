@@ -1,4 +1,4 @@
-#include "GameStateMachine.h"
+ï»¿#include "GameStateMachine.h"
 #include "GameState.h"
 
 using namespace std;
@@ -47,7 +47,7 @@ GameStateMachine::update()
 {
 	if (!gameStates.empty()) {
 		// Esta variable local evita que el estado sea destruido hasta que
-		// acabe esta función si su actualización lo desapila de esta pila
+		// acabe esta funciÃ³n si su actualizaciÃ³n lo desapila de esta pila
 		shared_ptr<GameState> current = gameStates.top();
 		current->update();
 	}
@@ -57,7 +57,7 @@ void
 GameStateMachine::render() const
 {
 	if (!gameStates.empty()) {
-		// Asumimos que render (const) no desapilará y destruirá el estado
+		// Asumimos que render (const) no desapilarÃ¡ y destruirÃ¡ el estado
 		gameStates.top()->render();
 	}
 }

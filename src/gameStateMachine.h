@@ -1,4 +1,4 @@
-#ifndef GAME_STATE_MACHINE_H
+ï»¿#ifndef GAME_STATE_MACHINE_H
 #define GAME_STATE_MACHINE_H
 
 #include <memory>
@@ -8,9 +8,9 @@
 #include <SDL3/SDL.h>
 
 /**
- * Máquina de estados del juego.
+ * MÃ¡quina de estados del juego.
  *
- * Se comporta como una pila y proporciona métodos update, render y
+ * Se comporta como una pila y proporciona mÃ©todos update, render y
  * handleEvent para aplicarlos sobre el estado actual.
  */
 class GameStateMachine
@@ -27,7 +27,7 @@ public:
 	// Reemplaza el estado actual por el nuevo estado
 	void replaceState(std::shared_ptr<GameState> state);
 	// Desapila el estado actual y pasa al siguiente en la pila
-	// (no hace nada si no la pila es vacía)
+	// (no hace nada si no la pila es vacÃ­a)
 	void popState();
 
 	// Sobrecargas que reciben un puntero normal
@@ -37,8 +37,8 @@ public:
 	bool empty() const;
 	operator bool() const;
 
-	// Métodos que delegan en los métodos homónimos de GameState
-	// sobre el estado actual (no hacen nada si la pila es vacía)
+	// MÃ©todos que delegan en los mÃ©todos homÃ³nimos de GameState
+	// sobre el estado actual (no hacen nada si la pila es vacÃ­a)
 	void update();
 	void render() const;
 	void handleEvents(const SDL_Event& event);

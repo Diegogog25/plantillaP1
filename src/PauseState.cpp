@@ -1,4 +1,4 @@
-#include "PauseState.h"
+﻿#include "PauseState.h"
 #include "Label.h"
 #include "Button.h"
 #include "game.h"
@@ -27,7 +27,7 @@ PauseState::PauseState(Game* g, GameStateMachine* gsm)
     mainMenuButton = new Button(g, volverTx, volverRect);
     exitButton = new Button(g, salirTx, salirRect);
 
-    // A�adimos los botones
+    // Añadimos los botones
     addObject(resumeButton);
     addObject(restartButton);
     addObject(mainMenuButton);
