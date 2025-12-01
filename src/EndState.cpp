@@ -3,7 +3,7 @@
 #include "Button.h"
 #include "game.h"
 #include "gameStateMachine.h"
-#include "Texture.h"
+#include "texture.h"
 #include "MainMenuState.h"
 
 EndState::EndState(Game* g, GameStateMachine* gsm, Texture* tex)
