@@ -20,7 +20,8 @@
 #include "Frog.h"
 #include "texture.h"
 #include "collision.h"
-#include "gameStateMachine.h"   // NUEVO
+#include "gameStateMachine.h"
+#include "PlayState.h"
 
 class Game : private GameStateMachine {
 public:
@@ -69,6 +70,7 @@ private:
     std::vector<HomedFrog*> homedFrogs{};
     std::list<Anchor>       toDelete;
     Frog* frog = nullptr;
+    PlayState* playstate = nullptr;
 
     std::mt19937_64 rng{ std::random_device{}() };
     bool exit = false;
@@ -127,7 +129,9 @@ public:
     void requestStartGame() { startRequested = true; }
     bool isStartRequested() const { return startRequested; }
     void clearStartRequest() { startRequested = false; }
-
+    bool checkVictory();
+    void startPlayState();
+    void exitTrue() { exit = true;}
 private:
     void handleEvents(); // ya no lo usaremos desde run(), pero lo dejamos por si acaso
     void runPauseMenu();

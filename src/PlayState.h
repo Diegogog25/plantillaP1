@@ -16,14 +16,13 @@ struct Collision;
  *  - etc.
  */
 class PlayState : public GameState {
-public:
-    using SceneAnchor = std::list<SceneObject*>::iterator;
-
 private:
     std::list<SceneObject*> sceneObjects;
     Frog* frog = nullptr; // rana principal
 
+
 public:
+    using SceneAnchor = std::list<SceneObject*>::iterator;
     PlayState(Game* game, GameStateMachine* gameMachine);
     ~PlayState() override;
 
@@ -33,10 +32,12 @@ public:
 
     // Gestión de objetos de escena
     SceneAnchor addSceneObject(SceneObject* o);
-    void        removeSceneObject(SceneAnchor it);
+    void removeSceneObject(SceneAnchor it);
 
     // Colisiones contra los objetos de escena
     Collision checkCollision(const SDL_FRect& box) const;
+
+    void checkEnd();
 
     Frog* getFrog() const { return frog; }
     void  setFrog(Frog* f) { frog = f; }

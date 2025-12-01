@@ -24,5 +24,5 @@ public:
     void setTexture(Texture* tex) { texture = tex; }
 
     void render() const override;
-    void update() override; // normalmente vacía
+    void update() override;
 };

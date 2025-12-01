@@ -175,22 +175,8 @@ void Game::update()
         (*it)->update();
 
     flushDeletions();
+    playstate->checkEnd();
 
-    // Fin por vidas
-    if (frog && frog->getLives() <= 0) {
-        exit = true;
-        return;
-    }
-
-    // Conteo de nidos ocupados
-    occupied = 0;
-    for (HomedFrog* o : homedFrogs) {
-        if (o->isOccupied()) ++occupied;
-    }
-    currentHomedFrogs = occupied;
-    if (currentHomedFrogs >= 5) {
-        exit = true;
-    }
 }
 
 void Game::render() const
@@ -215,6 +201,7 @@ Collision Game::checkCollision(const SDL_FRect& box) const
     return c;
 }
 
+
 void Game::flushDeletions()
 {
     for (auto it : toDelete) {
@@ -222,6 +209,15 @@ void Game::flushDeletions()
         objects.erase(it);
     }
     toDelete.clear();
+}
+bool Game::checkVictory() {
+    occupied = 0;
+    for (HomedFrog* o : homedFrogs) {
+        if (o->isOccupied()) ++occupied;
+    }
+    currentHomedFrogs = occupied;
+
+    return currentHomedFrogs >= 5;
 }
 
 void Game::SpawnWasps()
@@ -254,6 +250,11 @@ void Game::SpawnWasps()
         w->setAnchor(an);
     }
 }
+void Game::startPlayState() {
+    auto ps = new PlayState(this, this);   
+    replaceState(ps);                       
+    playstate = ps;                         
+}
 
 void Game::run()
 {
@@ -285,7 +286,7 @@ void Game::run()
         // ¿El menú ha pedido empezar la partida?
         if (startRequested) {
             clearStartRequest();
-            replaceState(new PlayState(this, this));
+            startPlayState();
         }
 
         // Lógica + render delegados
@@ -303,6 +304,8 @@ void Game::run()
             SDL_Delay((Uint32)(sleepMs + 0.5));
     }
 
+
     while (!empty()) popState();
 }
+
 

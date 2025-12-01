@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameState.h"
+#include "Texture.h"
 
 class Label;
 class Button;
@@ -14,12 +15,13 @@ private:
     Button* mainMenuButton = nullptr;
     Button* quitButton = nullptr;
 
+
 public:
-    // playerWon = true -> mensaje de victoria, si quieres usarlo más adelante
-    EndState(Game* game, GameStateMachine* gsm, bool playerWon);
+
+    EndState(Game* game, GameStateMachine* gsm,Texture* tex);
     ~EndState() override;
 
     void update() override;
     void render() const override;
-    void handleEvents(const SDL_Event& e) override; // plural
+    void handleEvents(const SDL_Event& e) override; 
 };

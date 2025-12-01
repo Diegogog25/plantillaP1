@@ -4,6 +4,7 @@
 #include "collision.h"
 #include "game.h"
 #include "PauseState.h" // <-- añadir
+#include "EndState.h"
 
 #include <SDL3/SDL.h>
 
@@ -33,6 +34,9 @@ void PlayState::update()
 
     // Lógica principal de Frogger (rana, coches, troncos, tortugas, avispas...)
     game->update();
+
+    Frog* frog = game->getFrog();
+
 }
 
 void PlayState::render() const
@@ -117,4 +121,19 @@ Collision PlayState::checkCollision(const SDL_FRect& box) const
             return c;
     }
     return c;
+}
+void PlayState::checkEnd(){
+        Frog* f = game->getFrog();
+
+    if (f && f->getLives() <= 0) {
+        Texture* tex = game->getTexture(Game::GAME_OVER); 
+        gameMachine->pushState(new EndState(game, gameMachine, tex));
+        return;
+    }
+
+    if (game->checkVictory()) {
+        Texture* tex = game->getTexture(Game::HAS_GANADO); 
+        gameMachine->pushState(new EndState(game, gameMachine, tex));
+        return;
+    }
 }

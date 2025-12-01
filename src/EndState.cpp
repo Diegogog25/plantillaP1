@@ -3,41 +3,42 @@
 #include "Button.h"
 #include "game.h"
 #include "gameStateMachine.h"
+#include "Texture.h"
 
-EndState::EndState(Game* g, GameStateMachine* gsm, bool /*playerWon*/)
+EndState::EndState(Game* g, GameStateMachine* gsm, Texture* tex)
     : GameState(g, gsm)
 {
-    Texture* tex = g->getTexture(Game::FROG); // placeholder
-
+    // Rectángulos de los objetos
     SDL_FRect msgRect{ 120.f, 100.f, 200.f, 40.f };
     SDL_FRect mainRect{ 140.f, 180.f, 160.f, 40.f };
     SDL_FRect quitRect{ 140.f, 240.f, 160.f, 40.f };
 
+    Texture* volverTx = g->getTexture(Game::VOLVER_MENU);
+    Texture* salirTx = g->getTexture(Game::SALIR);
+    // Crear los objetos del menú
     messageLabel = new Label(g, tex, msgRect);
-    mainMenuButton = new Button(g, tex, mainRect);
-    quitButton = new Button(g, tex, quitRect);
+    mainMenuButton = new Button(g, volverTx, mainRect);
+    quitButton = new Button(g, salirTx, quitRect);
 
+    // Añadirlos al estado
     addObject(messageLabel);
     addObject(mainMenuButton);
     addObject(quitButton);
 
+    // Registrar listeners
     addEventListener(mainMenuButton);
     addEventListener(quitButton);
 
+    // Conectar acciones de los botones
     mainMenuButton->connect([this]() {
         if (!gameMachine) return;
-        // Sustituir por MainMenuState cuando lo integremos en la pila
-        // Por ahora: simplemente vaciar y salir
-        while (!gameMachine->empty()) {
+        while (!gameMachine->empty())
             gameMachine->popState();
-        }
         });
 
     quitButton->connect([this]() {
-        if (!gameMachine) return;
-        while (!gameMachine->empty()) {
-            gameMachine->popState();
-        }
+        if (!game) return;
+        game->exitTrue();  // tu bool 'exit' en Game
         });
 }
 
