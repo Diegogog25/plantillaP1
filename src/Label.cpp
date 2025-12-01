@@ -14,3 +14,7 @@ void Label::render() const
     }
 }
 
+void Label::update()
+{
+
+}

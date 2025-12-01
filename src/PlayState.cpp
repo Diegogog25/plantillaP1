@@ -49,8 +49,8 @@ void PlayState::handleEvents(const SDL_Event& e)
 
     // ESC - abre menú de pausa 
     if (e.type == SDL_EVENT_KEY_DOWN && !e.key.repeat && e.key.key == SDLK_ESCAPE) {
-        game->pushState(new PauseState(game, nullptr)); // evitar conversión a GameStateMachine*
-        return; // no propagar a la rana
+        game->pushState(new PauseState(game, nullptr));
+        return; 
     }
 
     // Tecla 0 - pide confirmación para reiniciar
@@ -62,7 +62,7 @@ void PlayState::handleEvents(const SDL_Event& e)
         };
         const SDL_MessageBoxData msgData = {
             SDL_MESSAGEBOX_WARNING,
-            nullptr,                         // ventana padre (opcional)
+            nullptr,                        
             "Reiniciar partida",
             "¿Seguro que quieres reiniciar la partida?",
             SDL_arraysize(buttons),
@@ -74,7 +74,7 @@ void PlayState::handleEvents(const SDL_Event& e)
             if (buttonId == 1) {
                 game->reset();
                 frog = game->getFrog();
-                return; // no seguimos propagando este evento
+                return; 
             }
         }
     }
