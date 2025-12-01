@@ -1,4 +1,4 @@
-﻿#include "gameStateMachine.h"
+﻿#include "GameStateMachine.h"
 #include "GameState.h"
 
 using namespace std;

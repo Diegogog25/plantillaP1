@@ -39,19 +39,19 @@ PauseState::PauseState(Game* g, GameStateMachine* gsm)
     addEventListener(exitButton);
 
     resumeButton->connect([this]() {
-        if (this->game) this->game->popState();
+        if (game) game->popState();
     });
     restartButton->connect([this]() {
-        if (this->game) this->game->reset();
-        if (this->game) this->game->popState();
+        if (game) game->reset();
+        if (game) game->popState();
     });
     mainMenuButton->connect([this]() {
         if (!game) return;
 
-        // Quita el PauseState 
-        this->game->popState();
+        // Quita el PauseState (cima)
+        game->popState();
         // Reemplaza el estado que este por el MainMenuState
-        this->game->replaceState(std::make_shared<MainMenuState>(game, gameMachine));
+        game->replaceState(std::make_shared<MainMenuState>(game, gameMachine));
     });
     exitButton->connect([this]() {
         // Salir del juego: enviar evento de salida a SDL

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameState.h"
-#include "texture.h"
+#include "Texture.h"
 
 class Label;
 class Button;

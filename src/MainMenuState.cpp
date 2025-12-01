@@ -34,14 +34,17 @@ static Game::TextureName mapNameToTexture(const std::string& name) {
 MainMenuState::MainMenuState(Game* g, GameStateMachine* gsm)
     : GameState(g, gsm)
 {
+    // 1) Detectar mapas en ../assets/maps
     loadMaps();
 
+    // 2) Crear elementos de UI
     Texture* titleTex = g->getTexture(Game::ELIGE_MAPA);
 	Texture* leftTex = g->getTexture(Game::LEFT_ARROW);
 	Texture* rightTex = g->getTexture(Game::RIGHT_ARROW);
 	Texture* exitTex = g->getTexture(Game::SALIR);
     Texture* initialMapTex = mapNames.empty() ? g->getTexture(Game::ORIGINAL) : g->getTexture(mapNameToTexture(mapNames[currentIndex]));
         
+    // Coordenadas "más o menos" centradas. Ajusta si hace falta.
     SDL_FRect titleRect{ 94.f,  200.f, titleTex->getFrameWidth(), titleTex->getFrameHeight()}; // "ELIGE UN MAPA"
     SDL_FRect mapRect{ 224.f - initialMapTex->getFrameWidth() / 2, 270.f, initialMapTex->getFrameWidth(), initialMapTex->getFrameHeight()}; // nombre del mapa
     SDL_FRect leftRect{ 80.f, 270.f,  leftTex->getFrameWidth(), leftTex->getFrameHeight()}; // flecha izquierda
@@ -64,20 +67,28 @@ MainMenuState::MainMenuState(Game* g, GameStateMachine* gsm)
     addEventListener(mapButton);
     addEventListener(exitButton);
 
+    // Callback CONTINUAR = empezar partida
+    // Click en el nombre del mapa = empezar partida
     mapButton->connect([this]() {
         if (!game) return;
 
         if (!mapPaths.empty())
             game->setSelectedMap(mapPaths[currentIndex]);
+
+        // Solo marcamos que queremos empezar; Game::run se encargará de
+        // sustituir el menú por el PlayState.
         game->requestStartGame();
      });
 
+
+    // Callback SALIR = cerrar el juego
     exitButton->connect([this]() {
         if (gameMachine) {
             while (!gameMachine->empty())
                 gameMachine->popState();
         }
      });
+
     logCurrentMap();
 }
 
