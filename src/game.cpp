@@ -127,7 +127,6 @@ void Game::loadMap(const char* path)
     ifstream file(path);
     if (!file)
         throw FileNotFoundError(path);
-
     string line;
     int lineNum = 0;
 
@@ -141,26 +140,21 @@ void Game::loadMap(const char* path)
             frog = Frog::FromMap(this, ss, path, lineNum);
             addObject(frog);
             break;
-        }
-        case 'V': {
+        }case 'V': {
             addObject(Vehicle::FromMap(this, ss, path, lineNum));
             break;
-        }
-        case 'L': {
+        }case 'L': {
             addObject(Log::FromMap(this, ss, path, lineNum));
             break;
-        }
-        case 'T': {
+        }case 'T': {
             addObject(TurtleGroup::FromMap(this, ss, path, lineNum));
             break;
-        }
-        case 'W': {
+        }case 'W': {
             Wasp* w = Wasp::FromMap(this, ss, path, lineNum);
             Anchor an = addObject(w);
             w->setAnchor(an);
             break;
-        }
-        default:
+        }default:
             throw FileFormatError(path, lineNum, std::string("Unknown id: ") + id);
         }
     }
@@ -262,7 +256,6 @@ void Game::run()
 {
     const double targetFrameMs = 1000.0 / FRAME_RATE;
     const Uint64 perfFreq = SDL_GetPerformanceFrequency();
-
     exit = false;
     clearStartRequest();
 
@@ -281,9 +274,7 @@ void Game::run()
             }
             GameStateMachine::handleEvents(e);
         }
-
         if (empty() || exit) break;
-
         // Si ha empezado ya la partida
         if (startRequested) {
             clearStartRequest();
@@ -296,7 +287,6 @@ void Game::run()
         GameStateMachine::render();
         SDL_RenderPresent(renderer);
 
-        // Pacing de frames
         Uint64 frameEnd = SDL_GetPerformanceCounter();
         double elapsedMs = (frameEnd - frameStart) * 1000.0 / perfFreq;
         double sleepMs = targetFrameMs - elapsedMs;

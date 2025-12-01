@@ -60,8 +60,7 @@ void PlayState::handleEvents(const SDL_Event& e)
             { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "Cancelar" },
             { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "Reiniciar" }
         };
-        const SDL_MessageBoxData msgData = {
-            SDL_MESSAGEBOX_WARNING,
+        const SDL_MessageBoxData msgData = {SDL_MESSAGEBOX_WARNING,
             nullptr,                        
             "Reiniciar partida",
             "¿Seguro que quieres reiniciar la partida?",
@@ -69,7 +68,6 @@ void PlayState::handleEvents(const SDL_Event& e)
             buttons,
             nullptr
         };
-
         if (SDL_ShowMessageBox(&msgData, &buttonId)) {
             if (buttonId == 1) {
                 game->reset();
