@@ -138,6 +138,7 @@ void Game::loadMap(const char* path)
         switch (id) {
         case 'F': {
             frog = Frog::FromMap(this, ss, path, lineNum);
+            std::cout << "Vidas restantes: " << frog->getLives() << std::endl;
             addObject(frog);
             break;
         }case 'V': {

@@ -27,7 +27,10 @@ public:
 
     void setLives(int n) { lives = n; }
     int  getLives() const { return lives; }
-    void loseLife() { --lives; }
+    void loseLife() {
+        --lives;
+        std::cout << "Vidas restantes: " << lives << std::endl;
+    }
 
     void reset() { pos.setX(startPos.getX()); pos.setY(startPos.getY()); moving = false; framesLeft = 0; jumpFrames = 0; step.setX(0); step.setY(0); }
 

@@ -130,9 +130,9 @@ public:
     bool isStartRequested() const { return startRequested; }
     void clearStartRequest() { startRequested = false; }
     bool checkVictory();
-    void startPlayState();
     void exitTrue() { exit = true;}
 private:
+    void startPlayState();
     void initHomedFrogs();
     void SpawnWasps();
 };
